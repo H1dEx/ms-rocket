@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package payment.v1;
+
+option go_package = "github.com/H1dEx/ms-rocket/shared/pkg/proto/payment/v1;payment_v1";
+
+// PaymentService симулирует работу платёжного шлюза
+service PaymentService {
+    // PayOrder Обрабатывает команду на оплату и возвращает transaction_uuid
+    rpc PayOrder (PayOrderRequest) returns (PayOrderResponse);
+}
+
+// PaymentMethod способы оплаты
+enum PaymentMethod {
+    // PAYMENT_METHOD_UNKNOWN Неизвестный способ
+    PAYMENT_METHOD_UNKNOWN = 0;
+    // PAYMENT_METHOD_CARD Банковская карта
+    PAYMENT_METHOD_CARD = 1;
+    // PAYMENT_METHOD_SBP Система быстрых платежей
+    PAYMENT_METHOD_SBP = 2;
+    // PAYMENT_METHOD_CREDIT_CARD Кредитная карта
+    PAYMENT_METHOD_CREDIT_CARD = 3;
+    // PAYMENT_METHOD_INVESTOR_MONEY Деньги инвестора (внутренний метод)
+    PAYMENT_METHOD_INVESTOR_MONEY = 4;
+}
+
+// PayOrderRequest запрос оплаты
+message PayOrderRequest {
+    // order_uuid UUID заказа
+    string order_uuid = 1;
+
+    // user_uuid UUID пользователя, который инициирует оплату
+    string user_uuid = 2;
+    
+    // payment_method Выбранный способ оплаты
+    PaymentMethod payment_method = 3;
+}
+
+// PayOrderRequest ответ на запрос оплаты
+message PayOrderResponse {
+    string transaction_uuid = 1;
+}

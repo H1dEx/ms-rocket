@@ -1,0 +1,7 @@
+type: string
+description: "Order payment status"
+enum:
+  - UNKNOWN
+  - PENDING_PAYMENT
+  - PAID
+  - CANCELLED
