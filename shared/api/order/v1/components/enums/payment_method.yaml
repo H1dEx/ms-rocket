@@ -1,0 +1,8 @@
+type: string
+description: Способ оплаты заказа
+enum:
+  - UNKNOWN        # Unknown payment method
+  - CARD           # Bank card
+  - SBP            # Faster Payments System (Russia)
+  - CREDIT_CARD    # Credit card
+  - INVESTOR_MONEY # Money from investor account
