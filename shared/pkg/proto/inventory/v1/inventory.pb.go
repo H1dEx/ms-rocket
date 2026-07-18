@@ -492,7 +492,7 @@ type PartsFilter struct {
 	// Список имён. Пусто — не фильтруем по имени
 	Names []string `protobuf:"bytes,2,rep,name=names,proto3" json:"names,omitempty"`
 	// Список категорий. Пусто — не фильтруем по категории
-	Categories []string `protobuf:"bytes,3,rep,name=categories,proto3" json:"categories,omitempty"`
+	Categories []Category `protobuf:"varint,3,rep,packed,name=categories,proto3,enum=inventory.v1.Category" json:"categories,omitempty"`
 	// Список стран производителей. Пусто — не фильтруем по стране
 	ManufacturerCountries []string `protobuf:"bytes,4,rep,name=manufacturer_countries,json=manufacturerCountries,proto3" json:"manufacturer_countries,omitempty"`
 	// Список тегов. Пусто — не фильтруем по тегам
@@ -545,7 +545,7 @@ func (x *PartsFilter) GetNames() []string {
 	return nil
 }
 
-func (x *PartsFilter) GetCategories() []string {
+func (x *PartsFilter) GetCategories() []Category {
 	if x != nil {
 		return x.Categories
 	}
@@ -794,12 +794,12 @@ const file_inventory_v1_inventory_proto_rawDesc = "" +
 	"updated_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1aP\n" +
 	"\rMetadataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12)\n" +
-	"\x05value\x18\x02 \x01(\v2\x13.inventory.v1.ValueR\x05value:\x028\x01\"\xa4\x01\n" +
+	"\x05value\x18\x02 \x01(\v2\x13.inventory.v1.ValueR\x05value:\x028\x01\"\xbc\x01\n" +
 	"\vPartsFilter\x12\x14\n" +
 	"\x05uuids\x18\x01 \x03(\tR\x05uuids\x12\x14\n" +
-	"\x05names\x18\x02 \x03(\tR\x05names\x12\x1e\n" +
+	"\x05names\x18\x02 \x03(\tR\x05names\x126\n" +
 	"\n" +
-	"categories\x18\x03 \x03(\tR\n" +
+	"categories\x18\x03 \x03(\x0e2\x16.inventory.v1.CategoryR\n" +
 	"categories\x125\n" +
 	"\x16manufacturer_countries\x18\x04 \x03(\tR\x15manufacturerCountries\x12\x12\n" +
 	"\x04tags\x18\x05 \x03(\tR\x04tags\"$\n" +
@@ -856,19 +856,20 @@ var file_inventory_v1_inventory_proto_depIdxs = []int32{
 	10, // 3: inventory.v1.Part.metadata:type_name -> inventory.v1.Part.MetadataEntry
 	11, // 4: inventory.v1.Part.created_at:type_name -> google.protobuf.Timestamp
 	11, // 5: inventory.v1.Part.updated_at:type_name -> google.protobuf.Timestamp
-	4,  // 6: inventory.v1.GetPartResponse.part:type_name -> inventory.v1.Part
-	5,  // 7: inventory.v1.ListPartsRequest.filter:type_name -> inventory.v1.PartsFilter
-	4,  // 8: inventory.v1.ListPartsResponse.parts:type_name -> inventory.v1.Part
-	1,  // 9: inventory.v1.Part.MetadataEntry.value:type_name -> inventory.v1.Value
-	6,  // 10: inventory.v1.InventoryService.GetPart:input_type -> inventory.v1.GetPartRequest
-	8,  // 11: inventory.v1.InventoryService.ListParts:input_type -> inventory.v1.ListPartsRequest
-	7,  // 12: inventory.v1.InventoryService.GetPart:output_type -> inventory.v1.GetPartResponse
-	9,  // 13: inventory.v1.InventoryService.ListParts:output_type -> inventory.v1.ListPartsResponse
-	12, // [12:14] is the sub-list for method output_type
-	10, // [10:12] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	0,  // 6: inventory.v1.PartsFilter.categories:type_name -> inventory.v1.Category
+	4,  // 7: inventory.v1.GetPartResponse.part:type_name -> inventory.v1.Part
+	5,  // 8: inventory.v1.ListPartsRequest.filter:type_name -> inventory.v1.PartsFilter
+	4,  // 9: inventory.v1.ListPartsResponse.parts:type_name -> inventory.v1.Part
+	1,  // 10: inventory.v1.Part.MetadataEntry.value:type_name -> inventory.v1.Value
+	6,  // 11: inventory.v1.InventoryService.GetPart:input_type -> inventory.v1.GetPartRequest
+	8,  // 12: inventory.v1.InventoryService.ListParts:input_type -> inventory.v1.ListPartsRequest
+	7,  // 13: inventory.v1.InventoryService.GetPart:output_type -> inventory.v1.GetPartResponse
+	9,  // 14: inventory.v1.InventoryService.ListParts:output_type -> inventory.v1.ListPartsResponse
+	13, // [13:15] is the sub-list for method output_type
+	11, // [11:13] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_inventory_v1_inventory_proto_init() }
