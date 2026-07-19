@@ -10,7 +10,7 @@ import (
 func (s *service) PayOrderById(ctx context.Context, orderUUID string, paymentMethod model.PaymentMethod) (transactionUUID string, err error) {
 	order, err := s.repo.GetOrder(ctx, orderUUID)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	if order.Status != model.OrderStatusPendingPayment {

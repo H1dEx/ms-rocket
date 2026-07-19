@@ -10,7 +10,7 @@ import (
 func (s *service) OrderCancelById(ctx context.Context, orderUUID string) error {
 	order, err := s.repo.GetOrder(ctx, orderUUID)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	if order.Status != model.OrderStatusPendingPayment {
