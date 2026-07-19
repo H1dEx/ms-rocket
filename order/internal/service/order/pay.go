@@ -3,8 +3,9 @@ package order
 import (
 	"context"
 
-	"github.com/H1dEx/ms-rocket/order/internal/model"
 	"github.com/samber/lo"
+
+	"github.com/H1dEx/ms-rocket/order/internal/model"
 )
 
 func (s *service) PayOrderById(ctx context.Context, orderUUID string, paymentMethod model.PaymentMethod) (transactionUUID string, err error) {
@@ -18,7 +19,6 @@ func (s *service) PayOrderById(ctx context.Context, orderUUID string, paymentMet
 	}
 
 	transactionID, err := s.paymentClient.PayOrder(ctx, orderUUID, order.UserUUID, paymentMethod)
-	
 	if err != nil {
 		return "", err
 	}

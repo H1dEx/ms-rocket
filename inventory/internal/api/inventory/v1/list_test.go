@@ -3,15 +3,16 @@ package v1
 import (
 	"errors"
 
+	"github.com/brianvoe/gofakeit/v7"
+
 	"github.com/H1dEx/ms-rocket/inventory/internal/converter"
 	"github.com/H1dEx/ms-rocket/inventory/internal/model"
 	inventory_v1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
-	"github.com/brianvoe/gofakeit/v7"
 )
 
 func (a *ApiSuite) TestListPartsSuccess() {
 	partUUID := gofakeit.UUID()
-	parts := []model.Part{model.Part{Uuid: partUUID}}
+	parts := []model.Part{{Uuid: partUUID}}
 	filter := &inventory_v1.ListPartsRequest{}
 
 	a.service.On("GetList", a.ctx, &model.PartFilter{}).Return(parts, nil)

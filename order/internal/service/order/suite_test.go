@@ -4,19 +4,20 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/suite"
+
 	clientMock "github.com/H1dEx/ms-rocket/order/internal/client/grpc/mocks"
 	"github.com/H1dEx/ms-rocket/order/internal/repository/mocks"
-	"github.com/stretchr/testify/suite"
 )
 
 type ServiceSuite struct {
 	suite.Suite
 
-	ctx context.Context
-	repo *mocks.OrderRepository
-	paymentCli *clientMock.PaymentClient
+	ctx          context.Context
+	repo         *mocks.OrderRepository
+	paymentCli   *clientMock.PaymentClient
 	inventoryCli *clientMock.InventoryClient
-	service *service
+	service      *service
 }
 
 func (s *ServiceSuite) SetupTest() {

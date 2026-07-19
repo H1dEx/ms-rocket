@@ -3,8 +3,9 @@ package order
 import (
 	"context"
 
-	"github.com/H1dEx/ms-rocket/order/internal/model"
 	"github.com/samber/lo"
+
+	"github.com/H1dEx/ms-rocket/order/internal/model"
 )
 
 func (s *service) OrderCancelById(ctx context.Context, orderUUID string) error {

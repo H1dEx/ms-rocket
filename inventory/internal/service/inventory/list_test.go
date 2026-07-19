@@ -25,7 +25,7 @@ func (s *ServiceSuite) TestGetListSuccess() {
 
 func (s *ServiceSuite) TestGetListRepoError() {
 	filter := &model.PartFilter{}
-	ErrTest := errors.New("test error") 
+	ErrTest := errors.New("test error")
 
 	s.repo.On("ListParts", s.ctx, filter).Return(nil, ErrTest)
 

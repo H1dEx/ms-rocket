@@ -3,9 +3,10 @@ package order
 import (
 	"errors"
 
-	"github.com/H1dEx/ms-rocket/order/internal/model"
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/samber/lo"
+
+	"github.com/H1dEx/ms-rocket/order/internal/model"
 )
 
 func (s *ServiceSuite) TestPayOrderByIdSuccess() {
@@ -71,6 +72,7 @@ func (s *ServiceSuite) TestPayOrderByIdPayError() {
 	s.ErrorIs(err, ErrPay)
 	s.Empty(response)
 }
+
 func (s *ServiceSuite) TestPayOrderByIdGetError() {
 	var (
 		uuid          = gofakeit.UUID()

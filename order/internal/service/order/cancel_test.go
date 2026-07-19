@@ -1,9 +1,10 @@
 package order
 
 import (
-	"github.com/H1dEx/ms-rocket/order/internal/model"
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/samber/lo"
+
+	"github.com/H1dEx/ms-rocket/order/internal/model"
 )
 
 func (s *ServiceSuite) TestOrderCancelByIdSuccess() {
@@ -21,6 +22,7 @@ func (s *ServiceSuite) TestOrderCancelByIdSuccess() {
 	err := s.service.OrderCancelById(s.ctx, orderUUID)
 	s.NoError(err)
 }
+
 func (s *ServiceSuite) TestOrderCancelByIdUpdateErr() {
 	var (
 		orderUUID = gofakeit.UUID()
@@ -37,6 +39,7 @@ func (s *ServiceSuite) TestOrderCancelByIdUpdateErr() {
 	s.Error(err)
 	s.ErrorIs(err, model.ErrOrderNotFound)
 }
+
 func (s *ServiceSuite) TestOrderCancelByIdConflictErr() {
 	var (
 		orderUUID = gofakeit.UUID()
@@ -53,9 +56,7 @@ func (s *ServiceSuite) TestOrderCancelByIdConflictErr() {
 }
 
 func (s *ServiceSuite) TestOrderCancelByIdNotFoundErr() {
-	var (
-		orderUUID = gofakeit.UUID()
-	)
+	orderUUID := gofakeit.UUID()
 	s.repo.On("GetOrder", s.ctx, orderUUID).Return(model.Order{}, model.ErrOrderNotFound).Once()
 
 	err := s.service.OrderCancelById(s.ctx, orderUUID)

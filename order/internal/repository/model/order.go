@@ -29,7 +29,7 @@ type Order struct {
 	// Итоговая стоимость.
 	TotalPrice float32 `json:"total_price"`
 	// UUID транзакции (если оплачен).
-	TransactionUUID *string        `json:"transaction_uuid"`
+	TransactionUUID *string       `json:"transaction_uuid"`
 	PaymentMethod   PaymentMethod `json:"payment_method"`
-	Status          OrderStatus      `json:"status"`
+	Status          OrderStatus   `json:"status"`
 }

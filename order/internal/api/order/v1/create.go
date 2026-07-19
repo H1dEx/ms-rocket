@@ -3,7 +3,6 @@ package v1
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/H1dEx/ms-rocket/order/internal/model"
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
@@ -18,7 +17,7 @@ func (a *api) CreateOrder(ctx context.Context, req *orderV1.CreateOrderRequest) 
 		if errors.Is(err, model.ErrOrderNotFound) {
 			return &orderV1.NotFoundError{
 				Code:    404,
-				Message: fmt.Sprintf("Getting order error"),
+				Message: "Getting order error",
 			}, nil
 		}
 		return &orderV1.InternalServerError{Code: 500, Message: "Service error"}, nil

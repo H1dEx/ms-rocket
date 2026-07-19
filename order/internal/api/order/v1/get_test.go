@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/brianvoe/gofakeit/v7"
+
 	"github.com/H1dEx/ms-rocket/order/internal/client/converter"
 	"github.com/H1dEx/ms-rocket/order/internal/model"
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
-	"github.com/brianvoe/gofakeit/v7"
 )
 
 func (a *ApiSuite) TestGetOrderByIDSuccess() {
@@ -24,6 +25,7 @@ func (a *ApiSuite) TestGetOrderByIDSuccess() {
 	a.NoError(err)
 	a.Equal(response, res)
 }
+
 func (a *ApiSuite) TestGetOrderByNotFoundErr() {
 	var (
 		orderUUID = gofakeit.UUID()

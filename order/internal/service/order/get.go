@@ -8,7 +8,6 @@ import (
 
 func (s *service) GetOrderByID(ctx context.Context, orderUUID string) (model.Order, error) {
 	order, err := s.repo.GetOrder(ctx, orderUUID)
-
 	if err != nil {
 		return model.Order{}, err
 	}

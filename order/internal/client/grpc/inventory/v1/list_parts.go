@@ -11,7 +11,6 @@ import (
 
 func (c *client) ListParts(ctx context.Context, uuids []string) ([]model.Part, error) {
 	res, err := c.inventoryClient.ListParts(ctx, &inventory_v1.ListPartsRequest{Filter: &inventory_v1.PartsFilter{Uuids: uuids}})
-
 	if err != nil {
 		return nil, err
 	}

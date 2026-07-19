@@ -8,7 +8,7 @@ import (
 var _ grpc.PaymentClient = (*client)(nil)
 
 type client struct {
-	paymentClient   paymentV1.PaymentServiceClient
+	paymentClient paymentV1.PaymentServiceClient
 }
 
 func MewPaymentClient(paymentClient paymentV1.PaymentServiceClient) *client {

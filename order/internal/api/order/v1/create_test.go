@@ -3,9 +3,10 @@ package v1
 import (
 	"errors"
 
+	"github.com/brianvoe/gofakeit/v7"
+
 	"github.com/H1dEx/ms-rocket/order/internal/model"
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
-	"github.com/brianvoe/gofakeit/v7"
 )
 
 func (a *ApiSuite) TestCreateOrderByIDSuccess() {

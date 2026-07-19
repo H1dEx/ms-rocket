@@ -12,13 +12,13 @@ type service struct {
 	repo repository.OrderRepository
 
 	inventoryClient grpc.InventoryClient
-	paymentClient grpc.PaymentClient
+	paymentClient   grpc.PaymentClient
 }
 
 func NewOrderService(repo repository.OrderRepository, inventoryClient grpc.InventoryClient, paymentClient grpc.PaymentClient) *service {
 	return &service{
-		repo: repo,
+		repo:            repo,
 		inventoryClient: inventoryClient,
-		paymentClient: paymentClient,
+		paymentClient:   paymentClient,
 	}
 }

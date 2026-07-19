@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/H1dEx/ms-rocket/order/internal/model"
 	"github.com/google/uuid"
+
+	"github.com/H1dEx/ms-rocket/order/internal/model"
 )
 
 func findMissingId(parts []model.Part, ids []string) []string {
@@ -32,7 +33,7 @@ func (s *service) CreateOrder(ctx context.Context, userUUID string, partUUIDs []
 	}
 	if len(parts) < len(partUUIDs) {
 		ids := findMissingId(parts, partUUIDs)
-		return model.Order{}, fmt.Errorf("Not found details with uuids %v : %w", ids, model.ErrPartsNotFound)
+		return model.Order{}, fmt.Errorf("not found details with uuids %v : %w", ids, model.ErrPartsNotFound)
 	}
 
 	var sum float32
@@ -42,12 +43,10 @@ func (s *service) CreateOrder(ctx context.Context, userUUID string, partUUIDs []
 	uuid := uuid.New().String()
 
 	err = s.repo.CreateOrder(ctx, uuid, userUUID, partUUIDs, sum)
-
 	if err != nil {
 		return model.Order{}, err
 	}
 	order, err := s.repo.GetOrder(ctx, uuid)
-
 	if err != nil {
 		return model.Order{}, err
 	}

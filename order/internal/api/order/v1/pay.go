@@ -43,5 +43,5 @@ func (a *api) PayOrderById(ctx context.Context, req *orderV1.PayOrderRequest, pa
 		return &orderV1.InternalServerError{Code: 500, Message: "Service error"}, nil
 	}
 
-	return &orderV1.PayOrderResponse{TransactionUUID: transactionUUID}, nil 
+	return &orderV1.PayOrderResponse{TransactionUUID: transactionUUID}, nil
 }

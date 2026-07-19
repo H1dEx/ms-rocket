@@ -4,8 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/H1dEx/ms-rocket/order/internal/service/mocks"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/H1dEx/ms-rocket/order/internal/service/mocks"
 )
 
 type ApiSuite struct {

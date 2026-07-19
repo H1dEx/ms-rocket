@@ -67,27 +67,27 @@ func hasAnyTag(tags []string, f map[string]struct{}) bool {
 func filterParts(parts map[string]repoModel.Part, f FilterSets) []repoModel.Part {
 	result := []repoModel.Part{}
 	for _, p := range parts {
-		if f.Uuids != nil && len(f.Uuids) > 0 {
+		if len(f.Uuids) > 0 {
 			if _, ok := f.Uuids[p.Uuid]; !ok {
 				continue
 			}
 		}
-		if f.Names != nil && len(f.Names) > 0 {
+		if len(f.Names) > 0 {
 			if _, ok := f.Names[p.Name]; !ok {
 				continue
 			}
 		}
-		if f.Categories != nil && len(f.Categories) > 0 {
+		if len(f.Categories) > 0 {
 			if _, ok := f.Categories[p.Category]; !ok {
 				continue
 			}
 		}
-		if f.ManufacturerCountries != nil && len(f.ManufacturerCountries) > 0 {
+		if len(f.ManufacturerCountries) > 0 {
 			if _, ok := f.ManufacturerCountries[p.Uuid]; !ok {
 				continue
 			}
 		}
-		if f.Tags != nil && len(f.Tags) > 0 {
+		if len(f.Tags) > 0 {
 			if !hasAnyTag(p.Tags, f.Tags) {
 				continue
 			}

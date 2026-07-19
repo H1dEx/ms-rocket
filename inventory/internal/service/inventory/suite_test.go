@@ -4,10 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/H1dEx/ms-rocket/inventory/internal/model"
-	"github.com/H1dEx/ms-rocket/inventory/internal/repository/mocks"
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/H1dEx/ms-rocket/inventory/internal/model"
+	"github.com/H1dEx/ms-rocket/inventory/internal/repository/mocks"
 )
 
 type ServiceSuite struct {

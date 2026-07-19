@@ -35,10 +35,10 @@ type Manufacturer struct {
 }
 
 type MetadataValue struct {
-	StringValue *string  
-	Int64Value  *int64   
-	DoubleValue *float64 
-	BoolValue   *bool    
+	StringValue *string
+	Int64Value  *int64
+	DoubleValue *float64
+	BoolValue   *bool
 }
 
 type Part struct {
@@ -65,5 +65,5 @@ type Part struct {
 	// created_at Дата создания
 	CreatedAt *time.Time
 	// updated_at Дата обновления
-	UpdatedAt  *time.Time
+	UpdatedAt *time.Time
 }

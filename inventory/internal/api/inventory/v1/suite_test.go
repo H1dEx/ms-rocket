@@ -4,16 +4,17 @@ import (
 	"context"
 	"testing"
 
-	"github.com/H1dEx/ms-rocket/inventory/internal/service/mocks"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/H1dEx/ms-rocket/inventory/internal/service/mocks"
 )
 
 type ApiSuite struct {
 	suite.Suite
 
-	ctx context.Context
+	ctx     context.Context
 	service *mocks.InventoryService
-	api *api
+	api     *api
 }
 
 func (a *ApiSuite) SetupTest() {
@@ -23,7 +24,6 @@ func (a *ApiSuite) SetupTest() {
 }
 
 func (a *ApiSuite) TearDownTest() {}
-
 
 func TestServiceIntegration(t *testing.T) {
 	suite.Run(t, new(ApiSuite))

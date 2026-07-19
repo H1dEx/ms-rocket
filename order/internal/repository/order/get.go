@@ -7,7 +7,7 @@ import (
 	"github.com/H1dEx/ms-rocket/order/internal/repository/converter"
 )
 
-func(r *rep) GetOrder(ctx context.Context, orderUUID string) (model.Order, error) {
+func (r *rep) GetOrder(ctx context.Context, orderUUID string) (model.Order, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 

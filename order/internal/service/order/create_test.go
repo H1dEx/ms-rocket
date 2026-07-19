@@ -3,9 +3,10 @@ package order
 import (
 	"errors"
 
-	"github.com/H1dEx/ms-rocket/order/internal/model"
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/stretchr/testify/mock"
+
+	"github.com/H1dEx/ms-rocket/order/internal/model"
 )
 
 func (s *ServiceSuite) TestCreateOrderSuccess() {
@@ -13,7 +14,7 @@ func (s *ServiceSuite) TestCreateOrderSuccess() {
 		orderUUID  = gofakeit.UUID()
 		userUUID   = gofakeit.UUID()
 		partUUIDS  = []string{gofakeit.UUID(), gofakeit.UUID()}
-		parts      = []model.Part{model.Part{Uuid: partUUIDS[0], Price: 5}, model.Part{Uuid: partUUIDS[1], Price: 5}}
+		parts      = []model.Part{{Uuid: partUUIDS[0], Price: 5}, {Uuid: partUUIDS[1], Price: 5}}
 		totalPrice = float32(10)
 		order      = model.Order{
 			OrderUUID:  orderUUID,
@@ -37,7 +38,7 @@ func (s *ServiceSuite) TestCreateOrderNotFoundErr() {
 	var (
 		userUUID   = gofakeit.UUID()
 		partUUIDS  = []string{gofakeit.UUID(), gofakeit.UUID()}
-		parts      = []model.Part{model.Part{Uuid: partUUIDS[0], Price: 5}, model.Part{Uuid: partUUIDS[1], Price: 5}}
+		parts      = []model.Part{{Uuid: partUUIDS[0], Price: 5}, {Uuid: partUUIDS[1], Price: 5}}
 		totalPrice = float32(10)
 	)
 
@@ -56,7 +57,7 @@ func (s *ServiceSuite) TestCreateOrderCreateErr() {
 	var (
 		userUUID    = gofakeit.UUID()
 		partUUIDS   = []string{gofakeit.UUID(), gofakeit.UUID()}
-		parts       = []model.Part{model.Part{Uuid: partUUIDS[0], Price: 5}, model.Part{Uuid: partUUIDS[1], Price: 5}}
+		parts       = []model.Part{{Uuid: partUUIDS[0], Price: 5}, {Uuid: partUUIDS[1], Price: 5}}
 		totalPrice  = float32(10)
 		ErrCreating = errors.New("creating error")
 	)
@@ -75,7 +76,7 @@ func (s *ServiceSuite) TestCreateOrderGetLessPartsErr() {
 	var (
 		userUUID  = gofakeit.UUID()
 		partUUIDS = []string{gofakeit.UUID(), gofakeit.UUID()}
-		parts     = []model.Part{model.Part{Uuid: partUUIDS[0], Price: 5}, model.Part{Uuid: partUUIDS[1], Price: 5}}
+		parts     = []model.Part{{Uuid: partUUIDS[0], Price: 5}, {Uuid: partUUIDS[1], Price: 5}}
 	)
 
 	s.inventoryCli.On("ListParts", s.ctx, partUUIDS).Return(parts[:1], nil).Once()

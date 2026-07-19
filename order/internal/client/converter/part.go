@@ -3,9 +3,10 @@ package converter
 import (
 	"time"
 
+	"github.com/samber/lo"
+
 	"github.com/H1dEx/ms-rocket/order/internal/model"
 	inventory_v1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
-	"github.com/samber/lo"
 )
 
 func CategoryToModel(category inventory_v1.Category) model.Category {
@@ -23,7 +24,6 @@ func CategoryToModel(category inventory_v1.Category) model.Category {
 	}
 	return model.CategoryUnknown
 }
-
 
 func DimensionsToModel(dim *inventory_v1.Dimensions) *model.Dimensions {
 	if dim == nil {
@@ -53,7 +53,7 @@ func MetadataValueToModel(v *inventory_v1.Value) *model.MetadataValue {
 	if v == nil {
 		return nil
 	}
-	switch v.ValueType.(type){
+	switch v.ValueType.(type) {
 	case *inventory_v1.Value_StringValue:
 		return &model.MetadataValue{StringValue: lo.ToPtr(v.GetStringValue())}
 	case *inventory_v1.Value_DoubleValue:
@@ -75,11 +75,11 @@ func MetadataToRepoModel(m map[string]*inventory_v1.Value) map[string]*model.Met
 }
 
 func InventoryPartToModel(part *inventory_v1.Part) model.Part {
-	var createdAt *time.Time  
+	var createdAt *time.Time
 	if part.CreatedAt != nil {
 		createdAt = lo.ToPtr(part.CreatedAt.AsTime())
 	}
-	var updatedAt *time.Time  
+	var updatedAt *time.Time
 	if part.UpdatedAt != nil {
 		createdAt = lo.ToPtr(part.UpdatedAt.AsTime())
 	}
