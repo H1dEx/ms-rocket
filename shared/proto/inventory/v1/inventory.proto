@@ -117,7 +117,7 @@ message PartsFilter {
     repeated string names = 2;
 
     // Список категорий. Пусто — не фильтруем по категории
-    repeated string categories = 3;
+    repeated Category categories = 3;
 
     // Список стран производителей. Пусто — не фильтруем по стране
     repeated string manufacturer_countries = 4;
