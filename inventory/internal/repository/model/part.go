@@ -68,6 +68,21 @@ type Part struct {
 	UpdatedAt *time.Time
 }
 
+type PartMongo struct {
+	UUID          string                   `bson:"_id"`
+	Name          string                   `bson:"name"`
+	Description   string                   `bson:"description, omitempty"`
+	Price         uint64                   `bson:"price"`
+	StockQuantity int64                    `bson:"quanity"`
+	Category      string                   `bson:"category"`
+	Dimensions    Dimensions               `bson:"dimensions, omitempty"`
+	Manufacturer  Manufacturer             `bson:"manufacturer, omitempty"`
+	Tags          []string                 `bson:"tags, omitempty"`
+	Metadata      map[string]MetadataValue `bson:"metadata, omitempty"`
+	CreatedAt     time.Time                `bson:"created_at"`
+	UpdatedAt     *time.Time               `bson:"updated_at, omitempty"`
+}
+
 type PartFilter struct {
 	Uuids []string
 	// Список имён. Пусто — не фильтруем по имени

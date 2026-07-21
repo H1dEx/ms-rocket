@@ -1,0 +1,31 @@
+services:
+  inventory-mongo:
+    image: mongo:7.0.5
+    container_name: inventory-mongo
+    environment:
+      MONGO_INITDB_DATABASE: ${INVENTORY_MONGO_INITDB} # Имя базы данных, которая будет создана при запуске
+      MONGO_INITDB_ROOT_USERNAME: ${INVENTORY_MONGO_ROOT_USERNAME} # Имя root-пользователя MongoDB
+      MONGO_INITDB_ROOT_PASSWORD: ${INVENTORY_MONGO_ROOT_PASSWORD} # Пароль для root-пользователя
+    ports:
+      - "${INVENTORY_MONGO_PORT}:27017"
+    volumes:
+      - inventory-mongo-data:/data/db
+    networks:
+      - services-network
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "echo 'db.runCommand({ ping: 1 }).ok' | mongosh --quiet -u ${INVENTORY_MONGO_ROOT_USERNAME} -p ${INVENTORY_MONGO_ROOT_PASSWORD} --authenticationDatabase admin",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  services-network:
+    external: false
+
+volumes:
+  inventory-mongo-data:
