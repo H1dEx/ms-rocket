@@ -20,7 +20,6 @@ import (
 
 	inventoryApi "github.com/H1dEx/ms-rocket/inventory/internal/api/inventory/v1"
 	inventoryRepo "github.com/H1dEx/ms-rocket/inventory/internal/repository/inventory"
-	m "github.com/H1dEx/ms-rocket/inventory/internal/repository/model"
 	inventoryService "github.com/H1dEx/ms-rocket/inventory/internal/service/inventory"
 	inventoryV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
 )
@@ -28,7 +27,6 @@ import (
 const grpcPort = 50052
 
 func main() {
-
 	envFile, err := findEnvFile()
 	if err != nil {
 		log.Printf("failed to find .env file: %v\n", err)
@@ -65,23 +63,23 @@ func main() {
 		return
 	}
 
-	db := client.Database("inventory-service").Collection("parts")
+	_ = client.Database("inventory-service").Collection("parts")
 
-	test := m.PartMongo{
-		UUID:          "123",
-		Name:          "Test",
-		Description:   "Test",
-		Price:         100,
-		StockQuantity: 100,
-		Category:      "Test",
-		Dimensions:    m.Dimensions{Width: 100, Height: 100},
-	}
+	// test := m.PartMongo{
+	// 	UUID:          "123",
+	// 	Name:          "Test",
+	// 	Description:   "Test",
+	// 	Price:         100,
+	// 	StockQuantity: 100,
+	// 	Category:      "Test",
+	// 	Dimensions:    m.Dimensions{Width: 100, Height: 100},
+	// }
 
-	_, err = db.InsertOne(ctx, test)
-	if err != nil {
-		log.Printf("failed to insert test: %v\n", err)
-		return
-	}
+	// _, err = db.InsertOne(ctx, test)
+	// if err != nil {
+	// 	log.Printf("failed to insert test: %v\n", err)
+	// 	return
+	// }
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
 	if err != nil {

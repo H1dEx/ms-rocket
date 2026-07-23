@@ -2,32 +2,40 @@ package order
 
 import (
 	"context"
+	"log"
+	"strings"
 
 	"github.com/H1dEx/ms-rocket/order/internal/model"
-	"github.com/H1dEx/ms-rocket/order/internal/repository/converter"
 )
 
 func (r *rep) UpdateOrder(ctx context.Context, params model.UpdateOrderParam) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	order, ok := r.orders[params.OrderUUID]
+	var query strings.Builder
 
-	if !ok {
-		return model.ErrOrderNotFound
-	}
+	query.WriteString("UPDATE orders SET ")
 
 	if params.PaymentMethod != nil {
-		order.PaymentMethod = converter.PaymentMethodToRepoModel(*params.PaymentMethod)
+		query.WriteString("payment_method = $1, ")
 	}
 
 	if params.Status != nil {
-		order.Status = converter.StatusToRepoModel(*params.Status)
+		query.WriteString("status = $2, ")
 	}
 
 	if params.TransactionUUID != nil {
-		order.TransactionUUID = params.TransactionUUID
+		query.WriteString("transaction_uuid = $3 ")
 	}
 
-	r.orders[params.OrderUUID] = order
+	query.WriteString("WHERE order_uuid = $4")
+
+	res, err := r.conn.Exec(ctx, query.String(), params.PaymentMethod, params.Status, params.TransactionUUID, params.OrderUUID)
+	if err != nil {
+		log.Printf("error updating order: %v", err)
+		return err
+	}
+
+	if res.RowsAffected() == 0 {
+		return model.ErrOrderNotFound
+	}
+
 	return nil
 }

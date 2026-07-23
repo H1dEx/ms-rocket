@@ -13,7 +13,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/H1dEx/ms-rocket/order/internal/migrator"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -25,6 +24,7 @@ import (
 	orderApi "github.com/H1dEx/ms-rocket/order/internal/api/order/v1"
 	inventoryCli "github.com/H1dEx/ms-rocket/order/internal/client/grpc/inventory/v1"
 	paymentCli "github.com/H1dEx/ms-rocket/order/internal/client/grpc/payment/v1"
+	"github.com/H1dEx/ms-rocket/order/internal/migrator"
 	orderRepo "github.com/H1dEx/ms-rocket/order/internal/repository/order"
 	orderService "github.com/H1dEx/ms-rocket/order/internal/service/order"
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
@@ -128,7 +128,7 @@ func main() {
 	}()
 
 	inventoryClient := inventoryV1.NewInventoryServiceClient(inventoryConn)
-	repo := orderRepo.NewOrderRepository()
+	repo := orderRepo.NewOrderRepository(conn)
 	service := orderService.NewOrderService(repo, inventoryCli.NewInventoryClient(inventoryClient), paymentCli.MewPaymentClient(paymentClient))
 	api := orderApi.NewOrderApi(service)
 

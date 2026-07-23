@@ -1,21 +1,19 @@
 package order
 
 import (
-	"sync"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/H1dEx/ms-rocket/order/internal/repository"
-	"github.com/H1dEx/ms-rocket/order/internal/repository/model"
 )
 
 var _ repository.OrderRepository = (*rep)(nil)
 
 type rep struct {
-	mu     sync.RWMutex
-	orders map[string]model.Order
+	conn *pgxpool.Pool
 }
 
-func NewOrderRepository() *rep {
+func NewOrderRepository(conn *pgxpool.Pool) *rep {
 	return &rep{
-		orders: make(map[string]model.Order),
+		conn: conn,
 	}
 }

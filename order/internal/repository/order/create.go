@@ -2,23 +2,21 @@ package order
 
 import (
 	"context"
+	"log"
 
-	repoModel "github.com/H1dEx/ms-rocket/order/internal/repository/model"
+	"github.com/H1dEx/ms-rocket/order/internal/model"
 )
 
 func (r *rep) CreateOrder(ctx context.Context, orderUUID, userUUId string, partUuids []string, price float32) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	order := repoModel.Order{
-		OrderUUID:  orderUUID,
-		UserUUID:   userUUId,
-		PartUuids:  partUuids,
-		TotalPrice: price,
-		Status:     repoModel.OrderStatusPendingPayment,
+	res, err := r.conn.Exec(ctx, "INSERT INTO orders (order_uuid, user_uuid, part_uuids, total_price, status) VALUES ($1, $2, $3, $4, $5)", orderUUID, userUUId, partUuids, price, string(model.OrderStatusPendingPayment))
+	if err != nil {
+		log.Printf("error creating order: %v", err)
+		return err
 	}
 
-	r.orders[orderUUID] = order
+	if res.RowsAffected() == 0 {
+		return model.ErrOrderNotCreated
+	}
 
 	return nil
 }

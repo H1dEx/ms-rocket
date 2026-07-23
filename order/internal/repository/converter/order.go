@@ -17,58 +17,33 @@ func OrderToModel(o repoModel.Order) model.Order {
 	}
 }
 
-func PaymentMethodToModel(method repoModel.PaymentMethod) model.PaymentMethod {
-	switch method {
-	case repoModel.PaymentMethodCard:
+func PaymentMethodToModel(method *string) model.PaymentMethod {
+	if method == nil {
+		return model.PaymentMethodUnknown
+	}
+	switch *method {
+	case string(model.PaymentMethodCard):
 		return model.PaymentMethodCard
-	case repoModel.PaymentMethodSBP:
+	case string(model.PaymentMethodSBP):
 		return model.PaymentMethodSBP
-	case repoModel.PaymentMethodCreditCard:
+	case string(model.PaymentMethodCreditCard):
 		return model.PaymentMethodCreditCard
-	case repoModel.PaymentMethodInvestorMoney:
-		return model.PaymentMethod(repoModel.PaymentMethodInvestorMoney)
+	case string(model.PaymentMethodInvestorMoney):
+		return model.PaymentMethodInvestorMoney
 	default:
 		return model.PaymentMethodUnknown
 	}
 }
 
-func PaymentMethodToRepoModel(method model.PaymentMethod) repoModel.PaymentMethod {
-	switch method {
-	case model.PaymentMethodCard:
-		return repoModel.PaymentMethodCard
-	case model.PaymentMethodSBP:
-		return repoModel.PaymentMethodSBP
-	case model.PaymentMethodCreditCard:
-		return repoModel.PaymentMethodCreditCard
-	case model.PaymentMethodInvestorMoney:
-		return repoModel.PaymentMethod(repoModel.PaymentMethodInvestorMoney)
-	default:
-		return repoModel.PaymentMethodUnknown
-	}
-}
-
-func StatusToModel(status repoModel.OrderStatus) model.OrderStatus {
+func StatusToModel(status string) model.OrderStatus {
 	switch status {
-	case repoModel.OrderStatusPendingPayment:
+	case string(model.OrderStatusPendingPayment):
 		return model.OrderStatusPendingPayment
-	case repoModel.OrderStatusPaid:
+	case string(model.OrderStatusPaid):
 		return model.OrderStatusPaid
-	case repoModel.OrderStatusCancelled:
+	case string(model.OrderStatusCancelled):
 		return model.OrderStatusCancelled
 	default:
 		return model.OrderStatusUnknown
-	}
-}
-
-func StatusToRepoModel(status model.OrderStatus) repoModel.OrderStatus {
-	switch status {
-	case model.OrderStatusPendingPayment:
-		return repoModel.OrderStatusPendingPayment
-	case model.OrderStatusPaid:
-		return repoModel.OrderStatusPaid
-	case model.OrderStatusCancelled:
-		return repoModel.OrderStatusCancelled
-	default:
-		return repoModel.OrderStatusUnknown
 	}
 }
