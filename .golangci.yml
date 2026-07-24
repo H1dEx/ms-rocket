@@ -44,47 +44,24 @@ linters: # Список активных и отключённых линтер�
   disable: # Линтеры, которые намеренно отключены
     - gocyclo  # Старый линтер сложности (заменён на cyclop)
     - lll      # Проверка длины строк (часто шумная и мешает)
-linters-settings:
-  gocritic:
-    disabled-checks:
-      - containedctx  # Отключаем проверку на хранение контекста в структуре
-exclusions:
-  generated: strict
-  rules:
-
-
-  exclusions: # Исключения из анализа
-    generated: strict  # Игнорировать сгенерированные файлы (по "// Code generated ... DO NOT EDIT.")
-    rules: # Локальные исключения по пути/файлу/линерам
-      - path: _test\.go  # Для всех тестов:
-        linters:
-          - cyclop     # Не проверять сложность тестов
-          - dupl       # Не проверять дублирование в тестах
-          - gosec      # Не искать уязвимости в тестах
 
   settings: # Индивидуальные настройки для конкретных линтеров
-
-    gosec:
-      # Включаем все правила, включая экспериментальные
-      config:
-        global:
-          audit: true        # Активировать все правила безопасности
-          show-ignored: true # Показывать проигнорированные проблемы в комментариях
-        severity: "medium"   # Минимальная важность проблем, high/medium/low
-        confidence: "medium" # Минимальный уровень уверенности, high/medium/low
-        
     cyclop:
-      max-complexity: 20  # Допустимая сложность функции (больше 10, но не слишком жёстко)
+      max-complexity: 20  # Допустимая сложность функции
 
     depguard:
       rules:
         main:
+          # Без list-mode:lax дефолт original + пустой allow режет все не-stdlib импорты.
+          list-mode: lax
           deny:
             - pkg: io/ioutil  # Запрет использовать устаревший пакет
               desc: "Использование устаревшего пакета io/ioutil запрещено (замените вызовы на аналоги из пакетов os/io)"
 
     revive:
       severity: warning  # Нарушения revive будут как предупреждения, а не ошибки
+      # Иначе любое явное поле в settings.revive отключает дефолтные правила revive.
+      enable-default-rules: true
 
     forbidigo:
       exclude-godoc-examples: true  # Не применять запреты к Godoc-примерам
@@ -96,6 +73,22 @@ exclusions:
           msg: "Запрещено использовать time.Sleep в продакшен-коде (используй таймеры/контекст)"
         - pattern: '^http\.DefaultClient$'  # Запрет использования небезопасного http.DefaultClient
           msg: "Не используй http.DefaultClient (нет таймаутов); создай *http.Client с таймаутами"
+
+    gosec:
+      severity: medium   # Минимальная важность проблем
+      confidence: medium # Минимальный уровень уверенности
+
+  exclusions: # Исключения из анализа
+    generated: strict  # Игнорировать сгенерированные файлы (по "// Code generated ... DO NOT EDIT.")
+    presets:
+      - comments  # Не требовать package-comments / exported godoc на каждый символ
+    rules: # Локальные исключения по пути/файлу/линерам
+      - path: _test\.go  # Для всех тестов:
+        linters:
+          - cyclop       # Не проверять сложность тестов
+          - dupl         # Не проверять дублирование в тестах
+          - gosec        # Не искать уязвимости в тестах
+          - containedctx # ctx в testify Suite — обычный паттерн для тестов
 
 formatters: # Форматтеры кода (проверка стиля)
   enable:

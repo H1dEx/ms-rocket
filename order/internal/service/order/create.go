@@ -10,11 +10,11 @@ import (
 	"github.com/H1dEx/ms-rocket/order/internal/model"
 )
 
-func findMissingId(parts []model.Part, ids []string) []string {
+func findMissingID(parts []model.Part, ids []string) []string {
 	foundMap := make(map[string]struct{}, len(parts))
 
 	for _, part := range parts {
-		foundMap[part.Uuid] = struct{}{}
+		foundMap[part.UUID] = struct{}{}
 	}
 
 	notFound := []string{}
@@ -38,9 +38,8 @@ func (s *service) CreateOrder(ctx context.Context, userUUID string, partUUIDs []
 		return model.Order{}, err
 	}
 
-	log.Printf("parts: %v", parts)
 	if len(parts) < len(partUUIDs) {
-		ids := findMissingId(parts, partUUIDs)
+		ids := findMissingID(parts, partUUIDs)
 		return model.Order{}, fmt.Errorf("not found details with uuids %v : %w", ids, model.ErrPartsNotFound)
 	}
 

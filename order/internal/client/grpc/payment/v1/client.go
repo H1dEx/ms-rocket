@@ -11,7 +11,7 @@ type client struct {
 	paymentClient paymentV1.PaymentServiceClient
 }
 
-func MewPaymentClient(paymentClient paymentV1.PaymentServiceClient) *client {
+func NewPaymentClient(paymentClient paymentV1.PaymentServiceClient) grpc.PaymentClient {
 	return &client{
 		paymentClient: paymentClient,
 	}

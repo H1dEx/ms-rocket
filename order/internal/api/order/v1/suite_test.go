@@ -7,23 +7,24 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/H1dEx/ms-rocket/order/internal/service/mocks"
+	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
 )
 
-type ApiSuite struct {
+type APISuite struct {
 	suite.Suite
 	ctx     context.Context
 	service *mocks.OrderService
-	api     *api
+	api     orderV1.Handler
 }
 
-func (a *ApiSuite) SetupTest() {
+func (a *APISuite) SetupTest() {
 	a.ctx = context.Background()
 	a.service = mocks.NewOrderService(a.T())
-	a.api = NewOrderApi(a.service)
+	a.api = NewOrderAPI(a.service)
 }
 
-func (s *ApiSuite) TearDownTest() {}
+func (a *APISuite) TearDownTest() {}
 
 func TestService(t *testing.T) {
-	suite.Run(t, new(ApiSuite))
+	suite.Run(t, new(APISuite))
 }

@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE orders (
     id serial primary key,
-    order_uuid text not null,
+    order_uuid text not null unique,
     user_uuid text not null,
     part_uuids text[] not null,
     total_price real not null,

@@ -10,9 +10,9 @@ import (
 	inventory_v1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
 )
 
-func (a *ApiSuite) TestListPartsSuccess() {
+func (a *APISuite) TestListPartsSuccess() {
 	partUUID := gofakeit.UUID()
-	parts := []model.Part{{Uuid: partUUID}}
+	parts := []model.Part{{UUID: partUUID}}
 	filter := &inventory_v1.ListPartsRequest{}
 
 	a.service.On("GetList", a.ctx, &model.PartFilter{}).Return(parts, nil)
@@ -23,7 +23,7 @@ func (a *ApiSuite) TestListPartsSuccess() {
 	a.Equal(res, expect)
 }
 
-func (a *ApiSuite) TestListPartsError() {
+func (a *APISuite) TestListPartsError() {
 	filter := &inventory_v1.ListPartsRequest{}
 
 	ErrTest := errors.New("test error")

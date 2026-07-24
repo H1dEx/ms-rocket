@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"errors"
 
 	"github.com/jackc/pgx/v5"
 
@@ -22,7 +23,7 @@ func (r *rep) GetOrder(ctx context.Context, orderUUID string) (model.Order, erro
 
 	err := r.conn.QueryRow(ctx, "SELECT user_uuid, part_uuids, total_price, transaction_uuid, payment_method, status FROM orders WHERE order_uuid = $1 LIMIT 1", orderUUID).Scan(&userUUID, &partUuids, &totalPrice, &transactionUUID, &paymentMethod, &status)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return model.Order{}, model.ErrOrderNotFound
 		}
 		return model.Order{}, err

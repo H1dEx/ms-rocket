@@ -64,7 +64,7 @@ func StatusToOrder(status model.OrderStatus) orderV1.OrderStatus {
 	}
 }
 
-func OrderToApi(order model.Order) orderV1.OrderDto {
+func OrderToAPI(order model.Order) orderV1.OrderDto {
 	transaction := orderV1.OptString{Set: false}
 
 	if order.TransactionUUID != nil {

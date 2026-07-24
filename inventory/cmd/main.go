@@ -39,14 +39,14 @@ func main() {
 		return
 	}
 
-	INVENTORY_MONGO_URI := os.Getenv("INVENTORY_MONGO_URI")
-	if INVENTORY_MONGO_URI == "" {
+	mongoURI := os.Getenv("INVENTORY_MONGO_URI")
+	if mongoURI == "" {
 		log.Printf("INVENTORY_MONGO_URI is not set")
 		return
 	}
 
 	ctx := context.Background()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(INVENTORY_MONGO_URI))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
 	if err != nil {
 		log.Printf("failed to connect to MongoDB: %v\n", err)
 		return
@@ -62,8 +62,12 @@ func main() {
 		log.Printf("failed to ping database: %v\n", err)
 		return
 	}
-
-	_ = client.Database("inventory-service").Collection("parts")
+	dbName := os.Getenv("INVENTORY_MONGO_INITDB")
+	if dbName == "" {
+		log.Printf("INVENTORY_MONGO_INITDB is not set")
+		return
+	}
+	conn := client.Database(dbName, nil)
 
 	// test := m.PartMongo{
 	// 	UUID:          "123",
@@ -93,9 +97,9 @@ func main() {
 		}
 	}()
 
-	repo := inventoryRepo.NewRepository()
+	repo := inventoryRepo.NewRepository(conn)
 	service := inventoryService.NewService(repo)
-	api := inventoryApi.NewApi(service)
+	api := inventoryApi.NewAPI(service)
 
 	s := grpc.NewServer()
 

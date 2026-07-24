@@ -6,6 +6,6 @@ var _ def.PaymentService = (*service)(nil)
 
 type service struct{}
 
-func NewService() *service {
+func NewService() def.PaymentService {
 	return &service{}
 }

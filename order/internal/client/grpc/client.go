@@ -7,7 +7,7 @@ import (
 )
 
 type PaymentClient interface {
-	PayOrder(ctx context.Context, orderUuid, userUuid string, paymentMethod model.PaymentMethod) (transactionID string, err error)
+	PayOrder(ctx context.Context, orderUUID, userUUID string, paymentMethod model.PaymentMethod) (transactionID string, err error)
 }
 
 type InventoryClient interface {

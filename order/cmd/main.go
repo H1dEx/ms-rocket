@@ -54,8 +54,8 @@ func main() {
 		return
 	}
 
-	DB_URI := os.Getenv("DB_URI")
-	if DB_URI == "" {
+	dbURI := os.Getenv("DB_URI")
+	if dbURI == "" {
 		log.Printf("DB_URI is not set")
 		return
 	}
@@ -66,15 +66,15 @@ func main() {
 		return
 	}
 
-	MIGRATION_PATH := os.Getenv("MIGRATIONS_DIR")
-	if MIGRATION_PATH == "" {
+	migrationPath := os.Getenv("MIGRATIONS_DIR")
+	if migrationPath == "" {
 		log.Printf("MIGRATIONS_DIR is not set")
 		return
 	}
 
-	migrationDir := filepath.Join(orderDir, MIGRATION_PATH)
+	migrationDir := filepath.Join(orderDir, migrationPath)
 	ctx := context.Background()
-	conn, err := pgxpool.New(ctx, DB_URI)
+	conn, err := pgxpool.New(ctx, dbURI)
 	if err != nil {
 		log.Printf("failed to connect to database: %v\n", err)
 		return
@@ -89,8 +89,13 @@ func main() {
 		log.Printf("failed to ping database: %v\n", err)
 		return
 	}
-
-	migrator := migrator.NewMigrator(stdlib.OpenDB(*conn.Config().ConnConfig), migrationDir)
+	sqlDB := stdlib.OpenDB(*conn.Config().ConnConfig)
+	defer func() {
+		if cerr := sqlDB.Close(); cerr != nil {
+			log.Printf("failed to close database: %v", cerr)
+		}
+	}()
+	migrator := migrator.NewMigrator(sqlDB, migrationDir)
 	err = migrator.Up()
 	if err != nil {
 		log.Printf("failed to migrate database: %v\n", err)
@@ -129,8 +134,8 @@ func main() {
 
 	inventoryClient := inventoryV1.NewInventoryServiceClient(inventoryConn)
 	repo := orderRepo.NewOrderRepository(conn)
-	service := orderService.NewOrderService(repo, inventoryCli.NewInventoryClient(inventoryClient), paymentCli.MewPaymentClient(paymentClient))
-	api := orderApi.NewOrderApi(service)
+	service := orderService.NewOrderService(repo, inventoryCli.NewInventoryClient(inventoryClient), paymentCli.NewPaymentClient(paymentClient))
+	api := orderApi.NewOrderAPI(service)
 
 	orderServer, err := orderV1.NewServer(api)
 	if err != nil {
@@ -191,10 +196,7 @@ func findOrderDir() (string, error) {
 		return "", errors.New("runtime.Caller failed")
 	}
 	dir := filepath.Dir(file)
-	for {
-		if filepath.Base(dir) == "order" {
-			break
-		}
+	for filepath.Base(dir) != "order" {
 		parent := filepath.Dir(dir)
 		if parent == dir {
 			return "", errors.New("order not found")

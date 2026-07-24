@@ -7,24 +7,25 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/H1dEx/ms-rocket/payment/internal/service/mocks"
+	paymentV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/payment/v1"
 )
 
-type ApiSuite struct {
+type APISuite struct {
 	suite.Suite
 	ctx     context.Context
 	service *mocks.PaymentService
 
-	api *api
+	api paymentV1.PaymentServiceServer
 }
 
-func (a *ApiSuite) SetupTest() {
+func (a *APISuite) SetupTest() {
 	a.ctx = context.Background()
 	a.service = mocks.NewPaymentService(a.T())
-	a.api = NewApi(a.service)
+	a.api = NewAPI(a.service)
 }
 
-func (a *ApiSuite) TearDownTest() {}
+func (a *APISuite) TearDownTest() {}
 
 func TestServiceIntegration(t *testing.T) {
-	suite.Run(t, new(ApiSuite))
+	suite.Run(t, new(APISuite))
 }

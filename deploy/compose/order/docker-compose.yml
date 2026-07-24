@@ -22,7 +22,7 @@ services:
 
 networks:
   services-network:
-    external: false
+    external: true
 
 volumes:
   order-postgres-data:

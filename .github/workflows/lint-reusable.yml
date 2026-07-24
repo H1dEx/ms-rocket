@@ -31,7 +31,9 @@ jobs:
         run: cat go.work || echo "❗ go.work not found"
 
       - name: 📌 Install Task
-        uses: arduino/setup-task@v2.0.0
+        uses: arduino/setup-task@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: ✅ Run golangci-lint via Taskfile
         env:

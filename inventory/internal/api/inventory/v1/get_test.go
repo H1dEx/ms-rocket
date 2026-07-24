@@ -12,9 +12,9 @@ import (
 	inventoryV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
 )
 
-func (a *ApiSuite) TestGetPartSuccess() {
+func (a *APISuite) TestGetPartSuccess() {
 	uuid := gofakeit.UUID()
-	part := model.Part{Uuid: uuid}
+	part := model.Part{UUID: uuid}
 	a.service.On("GetPart", a.ctx, uuid).Return(part, nil)
 
 	res, err := a.api.GetPart(a.ctx, &inventoryV1.GetPartRequest{Uuid: uuid})
@@ -23,7 +23,7 @@ func (a *ApiSuite) TestGetPartSuccess() {
 	a.Equal(expect, res)
 }
 
-func (a *ApiSuite) TestGetPartNotFound() {
+func (a *APISuite) TestGetPartNotFound() {
 	uuid := gofakeit.UUID()
 
 	expectedErr := status.Errorf(codes.NotFound, "part with UUID %s not found", uuid)
@@ -35,7 +35,7 @@ func (a *ApiSuite) TestGetPartNotFound() {
 	a.Empty(res)
 }
 
-func (a *ApiSuite) TestGetPartUnknownError() {
+func (a *APISuite) TestGetPartUnknownError() {
 	uuid := gofakeit.UUID()
 
 	expectedErr := errors.New("Unknown err")

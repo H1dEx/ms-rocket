@@ -9,6 +9,6 @@ import (
 type OrderService interface {
 	CreateOrder(ctx context.Context, userUUID string, partUUIDs []string) (model.Order, error)
 	GetOrderByID(ctx context.Context, orderUUID string) (model.Order, error)
-	OrderCancelById(ctx context.Context, orderUUID string) error
-	PayOrderById(ctx context.Context, orderUUID string, paymentMethod model.PaymentMethod) (transactionUUID string, err error)
+	OrderCancelByID(ctx context.Context, orderUUID string) error
+	PayOrderByID(ctx context.Context, orderUUID string, paymentMethod model.PaymentMethod) (transactionUUID string, err error)
 }

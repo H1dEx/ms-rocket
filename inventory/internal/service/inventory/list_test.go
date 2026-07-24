@@ -11,7 +11,7 @@ func (s *ServiceSuite) TestGetListSuccess() {
 	partTwo := s.GenPart()
 	partThree := s.GenPart()
 
-	uuids := []string{partOne.Uuid, partTwo.Uuid, partThree.Uuid}
+	uuids := []string{partOne.UUID, partTwo.UUID, partThree.UUID}
 	result := []model.Part{partOne, partTwo, partThree}
 	filter := &model.PartFilter{Uuids: uuids}
 

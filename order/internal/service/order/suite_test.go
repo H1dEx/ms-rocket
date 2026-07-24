@@ -8,6 +8,7 @@ import (
 
 	clientMock "github.com/H1dEx/ms-rocket/order/internal/client/grpc/mocks"
 	"github.com/H1dEx/ms-rocket/order/internal/repository/mocks"
+	def "github.com/H1dEx/ms-rocket/order/internal/service"
 )
 
 type ServiceSuite struct {
@@ -17,7 +18,7 @@ type ServiceSuite struct {
 	repo         *mocks.OrderRepository
 	paymentCli   *clientMock.PaymentClient
 	inventoryCli *clientMock.InventoryClient
-	service      *service
+	service      def.OrderService
 }
 
 func (s *ServiceSuite) SetupTest() {

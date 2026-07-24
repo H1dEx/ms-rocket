@@ -1,7 +1,5 @@
 package model
 
-type PaymentMethod string
-
 type Order struct {
 	// Уникальный идентификатор заказа.
 	OrderUUID string `json:"order_uuid"`

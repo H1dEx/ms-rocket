@@ -8,7 +8,7 @@ import (
 func OrderToModel(o repoModel.Order) model.Order {
 	return model.Order{
 		OrderUUID:       o.OrderUUID,
-		UserUUID:        o.OrderUUID,
+		UserUUID:        o.UserUUID,
 		PartUuids:       o.PartUuids,
 		TotalPrice:      o.TotalPrice,
 		TransactionUUID: o.TransactionUUID,

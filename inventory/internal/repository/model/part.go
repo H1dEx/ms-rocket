@@ -1,37 +1,29 @@
 package model
 
-import "time"
-
-type Category string
-
-const (
-	CategoryUnknown  Category = "UNKNOWN"
-	CategoryEngine   Category = "ENGINE"
-	CategoryFuel     Category = "FUEL"
-	CategoryPorthole Category = "PORTHOLE"
-	CategoryWing     Category = "WING"
+import (
+	"time"
 )
 
 // Dimensions размеры детали Part
 type Dimensions struct {
 	// length длинна детали
-	Length float64
+	Length float64 `bson:"length"`
 	// width ширина детали
-	Width float64
+	Width float64 `bson:"width"`
 	// height высота детали
-	Height float64
+	Height float64 `bson:"height"`
 	// weght вес детали
-	Weight float64
+	Weight float64 `bson:"weight"`
 }
 
 // Manufacturer информация о производителе детали Part
 type Manufacturer struct {
 	// name название произвлдителя
-	Name string
+	Name string `bson:"name"`
 	// country страна производителя
-	Country string
+	Country string `bson:"country"`
 	// website ссылка на сайт производителя
-	Website string
+	Website string `bson:"website"`
 }
 
 type MetadataValue struct {
@@ -42,45 +34,18 @@ type MetadataValue struct {
 }
 
 type Part struct {
-	// uuid Уникальный идентификатор детали
-	Uuid string
-	// name Название детали
-	Name string
-	// description Описание детали
-	Description string
-	// price Цена за единицу
-	Price uint64
-	// stock_quantity Количество на складе
-	StockQuantity int64
-	// category Категория
-	Category Category
-	// dimensions Размеры детали
-	Dimensions *Dimensions
-	// manufacturer Информация о производителе
-	Manufacturer *Manufacturer
-	// tags для быстрого поиска
-	Tags []string
-	// metadata Гибкие метаданные
-	Metadata map[string]*MetadataValue
-	// created_at Дата создания
-	CreatedAt *time.Time
-	// updated_at Дата обновления
-	UpdatedAt *time.Time
-}
-
-type PartMongo struct {
 	UUID          string                   `bson:"_id"`
 	Name          string                   `bson:"name"`
-	Description   string                   `bson:"description, omitempty"`
+	Description   string                   `bson:"description,omitempty"`
 	Price         uint64                   `bson:"price"`
-	StockQuantity int64                    `bson:"quanity"`
+	StockQuantity int64                    `bson:"quantity"`
 	Category      string                   `bson:"category"`
-	Dimensions    Dimensions               `bson:"dimensions, omitempty"`
-	Manufacturer  Manufacturer             `bson:"manufacturer, omitempty"`
-	Tags          []string                 `bson:"tags, omitempty"`
-	Metadata      map[string]MetadataValue `bson:"metadata, omitempty"`
+	Dimensions    Dimensions               `bson:"dimensions,omitempty"`
+	Manufacturer  Manufacturer             `bson:"manufacturer,omitempty"`
+	Tags          []string                 `bson:"tags,omitempty"`
+	Metadata      map[string]MetadataValue `bson:"metadata,omitempty"`
 	CreatedAt     time.Time                `bson:"created_at"`
-	UpdatedAt     *time.Time               `bson:"updated_at, omitempty"`
+	UpdatedAt     *time.Time               `bson:"updated_at,omitempty"`
 }
 
 type PartFilter struct {
@@ -88,7 +53,7 @@ type PartFilter struct {
 	// Список имён. Пусто — не фильтруем по имени
 	Names []string
 	// Список категорий. Пусто — не фильтруем по категории
-	Categories []Category
+	Categories []string
 	// Список стран производителей. Пусто — не фильтруем по стране
 	ManufacturerCountries []string
 	// Список тегов. Пусто — не фильтруем по тегам

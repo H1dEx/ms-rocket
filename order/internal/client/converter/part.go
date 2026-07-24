@@ -81,10 +81,10 @@ func InventoryPartToModel(part *inventory_v1.Part) model.Part {
 	}
 	var updatedAt *time.Time
 	if part.UpdatedAt != nil {
-		createdAt = lo.ToPtr(part.UpdatedAt.AsTime())
+		updatedAt = lo.ToPtr(part.UpdatedAt.AsTime())
 	}
 	return model.Part{
-		Uuid:          part.Uuid,
+		UUID:          part.Uuid,
 		Name:          part.Name,
 		Description:   part.Description,
 		Price:         part.Price,

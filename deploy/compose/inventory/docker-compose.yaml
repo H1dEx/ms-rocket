@@ -25,7 +25,7 @@ services:
 
 networks:
   services-network:
-    external: false
+    external: true
 
 volumes:
   inventory-mongo-data:

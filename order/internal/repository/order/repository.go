@@ -12,7 +12,7 @@ type rep struct {
 	conn *pgxpool.Pool
 }
 
-func NewOrderRepository(conn *pgxpool.Pool) *rep {
+func NewOrderRepository(conn *pgxpool.Pool) repository.OrderRepository {
 	return &rep{
 		conn: conn,
 	}

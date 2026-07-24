@@ -39,7 +39,7 @@ func PartToProto(part model.Part) *inventoryV1.Part {
 	}
 
 	return &inventoryV1.Part{
-		Uuid:          part.Uuid,
+		Uuid:          part.UUID,
 		Name:          part.Name,
 		Description:   part.Description,
 		Price:         part.Price,
@@ -86,11 +86,7 @@ func CategoryToModel(category inventoryV1.Category) model.Category {
 	return model.CategoryUnknown
 }
 
-func DimensionsToProto(dim *model.Dimensions) *inventoryV1.Dimensions {
-	if dim == nil {
-		return nil
-	}
-
+func DimensionsToProto(dim model.Dimensions) *inventoryV1.Dimensions {
 	return &inventoryV1.Dimensions{
 		Length: dim.Length,
 		Width:  dim.Width,
@@ -99,10 +95,7 @@ func DimensionsToProto(dim *model.Dimensions) *inventoryV1.Dimensions {
 	}
 }
 
-func ManufacturerToProto(m *model.Manufacturer) *inventoryV1.Manufacturer {
-	if m == nil {
-		return nil
-	}
+func ManufacturerToProto(m model.Manufacturer) *inventoryV1.Manufacturer {
 	return &inventoryV1.Manufacturer{
 		Name:    m.Name,
 		Country: m.Country,
@@ -110,10 +103,7 @@ func ManufacturerToProto(m *model.Manufacturer) *inventoryV1.Manufacturer {
 	}
 }
 
-func MetadataValueToProto(v *model.MetadataValue) *inventoryV1.Value {
-	if v == nil {
-		return nil
-	}
+func MetadataValueToProto(v model.MetadataValue) *inventoryV1.Value {
 	switch {
 	case v.BoolValue != nil:
 		return &inventoryV1.Value{ValueType: &inventoryV1.Value_BoolValue{BoolValue: *v.BoolValue}}
@@ -127,7 +117,7 @@ func MetadataValueToProto(v *model.MetadataValue) *inventoryV1.Value {
 	return nil
 }
 
-func MetadataToRepoModel(m map[string]*model.MetadataValue) map[string]*inventoryV1.Value {
+func MetadataToRepoModel(m map[string]model.MetadataValue) map[string]*inventoryV1.Value {
 	metadata := make(map[string]*inventoryV1.Value, len(m))
 	for k, v := range m {
 		metadata[k] = MetadataValueToProto(v)

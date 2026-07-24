@@ -11,6 +11,6 @@ type service struct {
 	repo repository.InventoryRepository
 }
 
-func NewService(repo repository.InventoryRepository) *service {
+func NewService(repo repository.InventoryRepository) def.InventoryService {
 	return &service{repo}
 }
