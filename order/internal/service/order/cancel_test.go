@@ -19,7 +19,7 @@ func (s *ServiceSuite) TestOrderCancelByIdSuccess() {
 	s.repo.On("GetOrder", s.ctx, orderUUID).Return(order, nil).Once()
 	s.repo.On("UpdateOrder", s.ctx, param).Return(nil).Once()
 
-	err := s.service.OrderCancelById(s.ctx, orderUUID)
+	err := s.service.OrderCancelByID(s.ctx, orderUUID)
 	s.NoError(err)
 }
 
@@ -35,7 +35,7 @@ func (s *ServiceSuite) TestOrderCancelByIdUpdateErr() {
 	s.repo.On("GetOrder", s.ctx, orderUUID).Return(order, nil).Once()
 	s.repo.On("UpdateOrder", s.ctx, param).Return(model.ErrOrderNotFound).Once()
 
-	err := s.service.OrderCancelById(s.ctx, orderUUID)
+	err := s.service.OrderCancelByID(s.ctx, orderUUID)
 	s.Error(err)
 	s.ErrorIs(err, model.ErrOrderNotFound)
 }
@@ -50,7 +50,7 @@ func (s *ServiceSuite) TestOrderCancelByIdConflictErr() {
 	)
 	s.repo.On("GetOrder", s.ctx, orderUUID).Return(order, nil).Once()
 
-	err := s.service.OrderCancelById(s.ctx, orderUUID)
+	err := s.service.OrderCancelByID(s.ctx, orderUUID)
 	s.Error(err)
 	s.ErrorIs(err, model.ErrNotPendingStatus)
 }
@@ -59,7 +59,7 @@ func (s *ServiceSuite) TestOrderCancelByIdNotFoundErr() {
 	orderUUID := gofakeit.UUID()
 	s.repo.On("GetOrder", s.ctx, orderUUID).Return(model.Order{}, model.ErrOrderNotFound).Once()
 
-	err := s.service.OrderCancelById(s.ctx, orderUUID)
+	err := s.service.OrderCancelByID(s.ctx, orderUUID)
 	s.Error(err)
 	s.ErrorIs(err, model.ErrOrderNotFound)
 }

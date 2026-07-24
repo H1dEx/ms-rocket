@@ -10,8 +10,8 @@ type api struct {
 	paymentService service.PaymentService
 }
 
-func NewApi(service service.PaymentService) *api {
+func NewAPI(svc service.PaymentService) paymentV1.PaymentServiceServer {
 	return &api{
-		paymentService: service,
+		paymentService: svc,
 	}
 }

@@ -15,7 +15,7 @@ type service struct {
 	paymentClient   grpc.PaymentClient
 }
 
-func NewOrderService(repo repository.OrderRepository, inventoryClient grpc.InventoryClient, paymentClient grpc.PaymentClient) *service {
+func NewOrderService(repo repository.OrderRepository, inventoryClient grpc.InventoryClient, paymentClient grpc.PaymentClient) def.OrderService {
 	return &service{
 		repo:            repo,
 		inventoryClient: inventoryClient,

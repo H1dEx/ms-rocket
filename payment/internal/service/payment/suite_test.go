@@ -5,13 +5,15 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/suite"
+
+	def "github.com/H1dEx/ms-rocket/payment/internal/service"
 )
 
 type ServiceSuite struct {
 	suite.Suite
 	ctx context.Context
 
-	service *service
+	service def.PaymentService
 }
 
 func (s *ServiceSuite) SetupTest() {

@@ -9,13 +9,14 @@ import (
 
 	"github.com/H1dEx/ms-rocket/inventory/internal/model"
 	"github.com/H1dEx/ms-rocket/inventory/internal/repository/mocks"
+	def "github.com/H1dEx/ms-rocket/inventory/internal/service"
 )
 
 type ServiceSuite struct {
 	suite.Suite
 	ctx context.Context
 
-	service *service
+	service def.InventoryService
 	repo    *mocks.InventoryRepository
 }
 
@@ -29,7 +30,7 @@ func (s *ServiceSuite) TearDownTest() {}
 
 func (s *ServiceSuite) GenPart() model.Part {
 	return model.Part{
-		Uuid:          gofakeit.UUID(),
+		UUID:          gofakeit.UUID(),
 		Name:          gofakeit.ProductName(),
 		Description:   gofakeit.Comment(),
 		Price:         gofakeit.Uint64(),

@@ -8,7 +8,7 @@ import (
 	"github.com/H1dEx/ms-rocket/order/internal/model"
 )
 
-func (s *service) PayOrderById(ctx context.Context, orderUUID string, paymentMethod model.PaymentMethod) (transactionUUID string, err error) {
+func (s *service) PayOrderByID(ctx context.Context, orderUUID string, paymentMethod model.PaymentMethod) (transactionUUID string, err error) {
 	order, err := s.repo.GetOrder(ctx, orderUUID)
 	if err != nil {
 		return "", err

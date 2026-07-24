@@ -8,7 +8,7 @@ import (
 	paymentV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/payment/v1"
 )
 
-func (a *ApiSuite) TestPayOrderSuccess() {
+func (a *APISuite) TestPayOrderSuccess() {
 	uuid := gofakeit.UUID()
 	a.service.On("PayOrder", a.ctx).Return(uuid, nil).Once()
 
@@ -24,7 +24,7 @@ func (a *ApiSuite) TestPayOrderSuccess() {
 	}, res)
 }
 
-func (a *ApiSuite) TestPayOrderError() {
+func (a *APISuite) TestPayOrderError() {
 	ErrTest := errors.New("Test error expected")
 	a.service.On("PayOrder", a.ctx).Return("", ErrTest).Once()
 

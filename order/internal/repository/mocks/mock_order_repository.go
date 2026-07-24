@@ -22,9 +22,9 @@ func (_m *OrderRepository) EXPECT() *OrderRepository_Expecter {
 	return &OrderRepository_Expecter{mock: &_m.Mock}
 }
 
-// CreateOrder provides a mock function with given fields: ctx, orderUUID, userUUId, partUuids, price
-func (_m *OrderRepository) CreateOrder(ctx context.Context, orderUUID string, userUUId string, partUuids []string, price float32) error {
-	ret := _m.Called(ctx, orderUUID, userUUId, partUuids, price)
+// CreateOrder provides a mock function with given fields: ctx, orderUUID, userUUID, partUuids, price
+func (_m *OrderRepository) CreateOrder(ctx context.Context, orderUUID string, userUUID string, partUuids []string, price float32) error {
+	ret := _m.Called(ctx, orderUUID, userUUID, partUuids, price)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateOrder")
@@ -32,7 +32,7 @@ func (_m *OrderRepository) CreateOrder(ctx context.Context, orderUUID string, us
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, string, string, []string, float32) error); ok {
-		r0 = rf(ctx, orderUUID, userUUId, partUuids, price)
+		r0 = rf(ctx, orderUUID, userUUID, partUuids, price)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -48,14 +48,14 @@ type OrderRepository_CreateOrder_Call struct {
 // CreateOrder is a helper method to define mock.On call
 //   - ctx context.Context
 //   - orderUUID string
-//   - userUUId string
+//   - userUUID string
 //   - partUuids []string
 //   - price float32
-func (_e *OrderRepository_Expecter) CreateOrder(ctx interface{}, orderUUID interface{}, userUUId interface{}, partUuids interface{}, price interface{}) *OrderRepository_CreateOrder_Call {
-	return &OrderRepository_CreateOrder_Call{Call: _e.mock.On("CreateOrder", ctx, orderUUID, userUUId, partUuids, price)}
+func (_e *OrderRepository_Expecter) CreateOrder(ctx interface{}, orderUUID interface{}, userUUID interface{}, partUuids interface{}, price interface{}) *OrderRepository_CreateOrder_Call {
+	return &OrderRepository_CreateOrder_Call{Call: _e.mock.On("CreateOrder", ctx, orderUUID, userUUID, partUuids, price)}
 }
 
-func (_c *OrderRepository_CreateOrder_Call) Run(run func(ctx context.Context, orderUUID string, userUUId string, partUuids []string, price float32)) *OrderRepository_CreateOrder_Call {
+func (_c *OrderRepository_CreateOrder_Call) Run(run func(ctx context.Context, orderUUID string, userUUID string, partUuids []string, price float32)) *OrderRepository_CreateOrder_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(string), args[2].(string), args[3].([]string), args[4].(float32))
 	})

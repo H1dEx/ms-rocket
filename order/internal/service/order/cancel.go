@@ -8,7 +8,7 @@ import (
 	"github.com/H1dEx/ms-rocket/order/internal/model"
 )
 
-func (s *service) OrderCancelById(ctx context.Context, orderUUID string) error {
+func (s *service) OrderCancelByID(ctx context.Context, orderUUID string) error {
 	order, err := s.repo.GetOrder(ctx, orderUUID)
 	if err != nil {
 		return err

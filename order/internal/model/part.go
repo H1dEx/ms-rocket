@@ -43,7 +43,7 @@ type MetadataValue struct {
 
 type Part struct {
 	// uuid Уникальный идентификатор детали
-	Uuid string
+	UUID string
 	// name Название детали
 	Name string
 	// description Описание детали

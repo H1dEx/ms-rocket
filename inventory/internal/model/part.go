@@ -43,7 +43,7 @@ type MetadataValue struct {
 
 type Part struct {
 	// uuid Уникальный идентификатор детали
-	Uuid string
+	UUID string
 	// name Название детали
 	Name string
 	// description Описание детали
@@ -55,13 +55,13 @@ type Part struct {
 	// category Категория
 	Category Category
 	// dimensions Размеры детали
-	Dimensions *Dimensions
+	Dimensions Dimensions
 	// manufacturer Информация о производителе
-	Manufacturer *Manufacturer
+	Manufacturer Manufacturer
 	// tags для быстрого поиска
 	Tags []string
 	// metadata Гибкие метаданные
-	Metadata map[string]*MetadataValue
+	Metadata map[string]MetadataValue
 	// created_at Дата создания
 	CreatedAt *time.Time
 	// updated_at Дата обновления

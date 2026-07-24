@@ -10,6 +10,7 @@ import (
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
 )
 
+//nolint:revive // name must match ogen Handler (operationId PayOrderById)
 func (a *api) PayOrderById(ctx context.Context, req *orderV1.PayOrderRequest, params orderV1.PayOrderByIdParams) (orderV1.PayOrderByIdRes, error) {
 	if params.OrderUUID == "" {
 		return &orderV1.BadRequestError{
@@ -26,7 +27,7 @@ func (a *api) PayOrderById(ctx context.Context, req *orderV1.PayOrderRequest, pa
 		}, nil
 	}
 
-	transactionUUID, err := a.service.PayOrderById(ctx, params.OrderUUID, paymentMethod)
+	transactionUUID, err := a.service.PayOrderByID(ctx, params.OrderUUID, paymentMethod)
 	if err != nil {
 		if errors.Is(err, model.ErrOrderNotFound) {
 			return &orderV1.NotFoundError{

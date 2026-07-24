@@ -3,17 +3,18 @@ package order
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
 
 	"github.com/H1dEx/ms-rocket/order/internal/model"
 )
 
-func findMissingId(parts []model.Part, ids []string) []string {
+func findMissingID(parts []model.Part, ids []string) []string {
 	foundMap := make(map[string]struct{}, len(parts))
 
 	for _, part := range parts {
-		foundMap[part.Uuid] = struct{}{}
+		foundMap[part.UUID] = struct{}{}
 	}
 
 	notFound := []string{}
@@ -27,12 +28,18 @@ func findMissingId(parts []model.Part, ids []string) []string {
 }
 
 func (s *service) CreateOrder(ctx context.Context, userUUID string, partUUIDs []string) (model.Order, error) {
+	if len(partUUIDs) == 0 {
+		return model.Order{}, fmt.Errorf("no parts provided")
+	}
+
 	parts, err := s.inventoryClient.ListParts(ctx, partUUIDs)
 	if err != nil {
+		log.Printf("error listing parts: %v", err)
 		return model.Order{}, err
 	}
+
 	if len(parts) < len(partUUIDs) {
-		ids := findMissingId(parts, partUUIDs)
+		ids := findMissingID(parts, partUUIDs)
 		return model.Order{}, fmt.Errorf("not found details with uuids %v : %w", ids, model.ErrPartsNotFound)
 	}
 

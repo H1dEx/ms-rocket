@@ -11,12 +11,12 @@ import (
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
 )
 
-func (a *ApiSuite) TestGetOrderByIDSuccess() {
+func (a *APISuite) TestGetOrderByIDSuccess() {
 	var (
 		orderUUID = gofakeit.UUID()
 		order     = model.Order{OrderUUID: orderUUID}
 		param     = orderV1.GetOrderByIDParams{OrderUUID: orderUUID}
-		res       = &orderV1.GetOrderResponse{Order: converter.OrderToApi(order)}
+		res       = &orderV1.GetOrderResponse{Order: converter.OrderToAPI(order)}
 	)
 
 	a.service.On("GetOrderByID", a.ctx, orderUUID).Return(order, nil).Once()
@@ -26,7 +26,7 @@ func (a *ApiSuite) TestGetOrderByIDSuccess() {
 	a.Equal(response, res)
 }
 
-func (a *ApiSuite) TestGetOrderByNotFoundErr() {
+func (a *APISuite) TestGetOrderByNotFoundErr() {
 	var (
 		orderUUID = gofakeit.UUID()
 		param     = orderV1.GetOrderByIDParams{OrderUUID: orderUUID}
@@ -43,7 +43,7 @@ func (a *ApiSuite) TestGetOrderByNotFoundErr() {
 	a.Equal(response, resErr)
 }
 
-func (a *ApiSuite) TestGetOrderByServerErr() {
+func (a *APISuite) TestGetOrderByServerErr() {
 	var (
 		orderUUID = gofakeit.UUID()
 		param     = orderV1.GetOrderByIDParams{OrderUUID: orderUUID}

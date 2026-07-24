@@ -2,6 +2,9 @@ package inventory
 
 import (
 	"context"
+	"log"
+
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/H1dEx/ms-rocket/inventory/internal/model"
 	"github.com/H1dEx/ms-rocket/inventory/internal/repository/converter"
@@ -9,23 +12,37 @@ import (
 )
 
 func (r *repository) ListParts(ctx context.Context, filter *model.PartFilter) ([]model.Part, error) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
 	f := converter.PartFilterToRepoModel(filter)
 	filterSet := BuildFilterSets(f)
-	parts := filterParts(r.parts, filterSet)
-	result := make([]model.Part, 0, len(parts))
 
-	for _, part := range parts {
-		result = append(result, converter.PartToModel(part))
+	cursor, err := r.collection.Find(ctx, prepareFilterSets(filterSet))
+	if err != nil {
+		return nil, err
 	}
-	return result, nil
+
+	defer func() {
+		if err := cursor.Close(ctx); err != nil {
+			log.Printf("failed to close cursor: %v\n", err)
+		}
+	}()
+
+	var parts []repoModel.Part
+
+	if err := cursor.All(ctx, &parts); err != nil {
+		return nil, err
+	}
+
+	results := make([]model.Part, 0, len(parts))
+	for _, part := range parts {
+		results = append(results, converter.PartToModel(part))
+	}
+	return results, nil
 }
 
 type FilterSets struct {
 	Uuids                 map[string]struct{}
 	Names                 map[string]struct{}
-	Categories            map[repoModel.Category]struct{}
+	Categories            map[string]struct{}
 	ManufacturerCountries map[string]struct{}
 	Tags                  map[string]struct{}
 }
@@ -55,44 +72,48 @@ func filterToMap[T comparable](f []T) map[T]struct{} {
 	return acc
 }
 
-func hasAnyTag(tags []string, f map[string]struct{}) bool {
-	for _, t := range tags {
-		if _, ok := f[t]; ok {
-			return true
-		}
-	}
-	return false
-}
+func prepareFilterSets(f FilterSets) bson.M {
+	filter := bson.M{}
 
-func filterParts(parts map[string]repoModel.Part, f FilterSets) []repoModel.Part {
-	result := []repoModel.Part{}
-	for _, p := range parts {
-		if len(f.Uuids) > 0 {
-			if _, ok := f.Uuids[p.Uuid]; !ok {
-				continue
-			}
+	if len(f.Uuids) > 0 {
+		ids := make([]string, 0, len(f.Uuids))
+		for k := range f.Uuids {
+			ids = append(ids, k)
 		}
-		if len(f.Names) > 0 {
-			if _, ok := f.Names[p.Name]; !ok {
-				continue
-			}
-		}
-		if len(f.Categories) > 0 {
-			if _, ok := f.Categories[p.Category]; !ok {
-				continue
-			}
-		}
-		if len(f.ManufacturerCountries) > 0 {
-			if _, ok := f.ManufacturerCountries[p.Uuid]; !ok {
-				continue
-			}
-		}
-		if len(f.Tags) > 0 {
-			if !hasAnyTag(p.Tags, f.Tags) {
-				continue
-			}
-		}
-		result = append(result, p)
+		filter["_id"] = bson.M{"$in": ids}
 	}
-	return result
+
+	if len(f.Names) > 0 {
+		names := make([]string, 0, len(f.Names))
+		for k := range f.Names {
+			names = append(names, k)
+		}
+		filter["name"] = bson.M{"$in": names}
+	}
+
+	if len(f.Categories) > 0 {
+		cats := make([]string, 0, len(f.Categories))
+		for k := range f.Categories {
+			cats = append(cats, k)
+		}
+		filter["category"] = bson.M{"$in": cats}
+	}
+
+	if len(f.ManufacturerCountries) > 0 {
+		countries := make([]string, 0, len(f.ManufacturerCountries))
+		for k := range f.ManufacturerCountries {
+			countries = append(countries, k)
+		}
+		filter["manufacturer.country"] = bson.M{"$in": countries}
+	}
+
+	if len(f.Tags) > 0 {
+		tags := make([]string, 0, len(f.Tags))
+		for k := range f.Tags {
+			tags = append(tags, k)
+		}
+		filter["tags"] = bson.M{"$in": tags}
+	}
+
+	return filter
 }

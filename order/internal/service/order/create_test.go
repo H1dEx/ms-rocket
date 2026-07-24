@@ -14,7 +14,7 @@ func (s *ServiceSuite) TestCreateOrderSuccess() {
 		orderUUID  = gofakeit.UUID()
 		userUUID   = gofakeit.UUID()
 		partUUIDS  = []string{gofakeit.UUID(), gofakeit.UUID()}
-		parts      = []model.Part{{Uuid: partUUIDS[0], Price: 5}, {Uuid: partUUIDS[1], Price: 5}}
+		parts      = []model.Part{{UUID: partUUIDS[0], Price: 5}, {UUID: partUUIDS[1], Price: 5}}
 		totalPrice = float32(10)
 		order      = model.Order{
 			OrderUUID:  orderUUID,
@@ -38,7 +38,7 @@ func (s *ServiceSuite) TestCreateOrderNotFoundErr() {
 	var (
 		userUUID   = gofakeit.UUID()
 		partUUIDS  = []string{gofakeit.UUID(), gofakeit.UUID()}
-		parts      = []model.Part{{Uuid: partUUIDS[0], Price: 5}, {Uuid: partUUIDS[1], Price: 5}}
+		parts      = []model.Part{{UUID: partUUIDS[0], Price: 5}, {UUID: partUUIDS[1], Price: 5}}
 		totalPrice = float32(10)
 	)
 
@@ -57,7 +57,7 @@ func (s *ServiceSuite) TestCreateOrderCreateErr() {
 	var (
 		userUUID    = gofakeit.UUID()
 		partUUIDS   = []string{gofakeit.UUID(), gofakeit.UUID()}
-		parts       = []model.Part{{Uuid: partUUIDS[0], Price: 5}, {Uuid: partUUIDS[1], Price: 5}}
+		parts       = []model.Part{{UUID: partUUIDS[0], Price: 5}, {UUID: partUUIDS[1], Price: 5}}
 		totalPrice  = float32(10)
 		ErrCreating = errors.New("creating error")
 	)
@@ -76,7 +76,7 @@ func (s *ServiceSuite) TestCreateOrderGetLessPartsErr() {
 	var (
 		userUUID  = gofakeit.UUID()
 		partUUIDS = []string{gofakeit.UUID(), gofakeit.UUID()}
-		parts     = []model.Part{{Uuid: partUUIDS[0], Price: 5}, {Uuid: partUUIDS[1], Price: 5}}
+		parts     = []model.Part{{UUID: partUUIDS[0], Price: 5}, {UUID: partUUIDS[1], Price: 5}}
 	)
 
 	s.inventoryCli.On("ListParts", s.ctx, partUUIDS).Return(parts[:1], nil).Once()

@@ -22,5 +22,5 @@ func (a *api) GetOrderByID(ctx context.Context, params orderV1.GetOrderByIDParam
 		return &orderV1.InternalServerError{Code: 500, Message: "Service error"}, nil
 	}
 
-	return &orderV1.GetOrderResponse{Order: converter.OrderToApi(order)}, nil
+	return &orderV1.GetOrderResponse{Order: converter.OrderToAPI(order)}, nil
 }

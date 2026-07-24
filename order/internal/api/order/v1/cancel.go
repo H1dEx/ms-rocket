@@ -9,8 +9,9 @@ import (
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
 )
 
+//nolint:revive // name must match ogen Handler (operationId OrderCancelById)
 func (a *api) OrderCancelById(ctx context.Context, params orderV1.OrderCancelByIdParams) (orderV1.OrderCancelByIdRes, error) {
-	err := a.service.OrderCancelById(ctx, params.OrderUUID)
+	err := a.service.OrderCancelByID(ctx, params.OrderUUID)
 	if err != nil {
 		if errors.Is(err, model.ErrOrderNotFound) {
 			return &orderV1.NotFoundError{

@@ -9,9 +9,9 @@ import (
 func (s *ServiceSuite) TestGetPartSuccess() {
 	part := s.GenPart()
 
-	s.repo.On("GetPart", s.ctx, part.Uuid).Return(part, nil).Once()
+	s.repo.On("GetPart", s.ctx, part.UUID).Return(part, nil).Once()
 
-	res, err := s.service.GetPart(s.ctx, part.Uuid)
+	res, err := s.service.GetPart(s.ctx, part.UUID)
 
 	s.NoError(err)
 	s.NotEmpty(res)

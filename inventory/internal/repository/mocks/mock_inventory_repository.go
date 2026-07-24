@@ -22,9 +22,9 @@ func (_m *InventoryRepository) EXPECT() *InventoryRepository_Expecter {
 	return &InventoryRepository_Expecter{mock: &_m.Mock}
 }
 
-// GetPart provides a mock function with given fields: ctx, partUuid
-func (_m *InventoryRepository) GetPart(ctx context.Context, partUuid string) (model.Part, error) {
-	ret := _m.Called(ctx, partUuid)
+// GetPart provides a mock function with given fields: ctx, partUUID
+func (_m *InventoryRepository) GetPart(ctx context.Context, partUUID string) (model.Part, error) {
+	ret := _m.Called(ctx, partUUID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetPart")
@@ -33,16 +33,16 @@ func (_m *InventoryRepository) GetPart(ctx context.Context, partUuid string) (mo
 	var r0 model.Part
 	var r1 error
 	if rf, ok := ret.Get(0).(func(context.Context, string) (model.Part, error)); ok {
-		return rf(ctx, partUuid)
+		return rf(ctx, partUUID)
 	}
 	if rf, ok := ret.Get(0).(func(context.Context, string) model.Part); ok {
-		r0 = rf(ctx, partUuid)
+		r0 = rf(ctx, partUUID)
 	} else {
 		r0 = ret.Get(0).(model.Part)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, partUuid)
+		r1 = rf(ctx, partUUID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -57,12 +57,12 @@ type InventoryRepository_GetPart_Call struct {
 
 // GetPart is a helper method to define mock.On call
 //   - ctx context.Context
-//   - partUuid string
-func (_e *InventoryRepository_Expecter) GetPart(ctx interface{}, partUuid interface{}) *InventoryRepository_GetPart_Call {
-	return &InventoryRepository_GetPart_Call{Call: _e.mock.On("GetPart", ctx, partUuid)}
+//   - partUUID string
+func (_e *InventoryRepository_Expecter) GetPart(ctx interface{}, partUUID interface{}) *InventoryRepository_GetPart_Call {
+	return &InventoryRepository_GetPart_Call{Call: _e.mock.On("GetPart", ctx, partUUID)}
 }
 
-func (_c *InventoryRepository_GetPart_Call) Run(run func(ctx context.Context, partUuid string)) *InventoryRepository_GetPart_Call {
+func (_c *InventoryRepository_GetPart_Call) Run(run func(ctx context.Context, partUUID string)) *InventoryRepository_GetPart_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(string))
 	})

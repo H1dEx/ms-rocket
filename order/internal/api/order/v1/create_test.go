@@ -9,7 +9,7 @@ import (
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
 )
 
-func (a *ApiSuite) TestCreateOrderByIDSuccess() {
+func (a *APISuite) TestCreateOrderByIDSuccess() {
 	var (
 		orderUUID = gofakeit.UUID()
 		userUUID  = gofakeit.UUID()
@@ -26,7 +26,7 @@ func (a *ApiSuite) TestCreateOrderByIDSuccess() {
 	a.Equal(response, res)
 }
 
-func (a *ApiSuite) TestCreateOrderPartsNotFound() {
+func (a *APISuite) TestCreateOrderPartsNotFound() {
 	var (
 		userUUID  = gofakeit.UUID()
 		partsUUID = []string{gofakeit.UUID()}
@@ -41,7 +41,7 @@ func (a *ApiSuite) TestCreateOrderPartsNotFound() {
 	a.Equal(response, res)
 }
 
-func (a *ApiSuite) TestCreateOrderOrderServerErr() {
+func (a *APISuite) TestCreateOrderOrderServerErr() {
 	var (
 		userUUID  = gofakeit.UUID()
 		partsUUID = []string{gofakeit.UUID()}

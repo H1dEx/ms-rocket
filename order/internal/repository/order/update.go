@@ -2,32 +2,54 @@ package order
 
 import (
 	"context"
+	"fmt"
+	"log"
+	"strings"
 
 	"github.com/H1dEx/ms-rocket/order/internal/model"
-	"github.com/H1dEx/ms-rocket/order/internal/repository/converter"
 )
 
 func (r *rep) UpdateOrder(ctx context.Context, params model.UpdateOrderParam) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	order, ok := r.orders[params.OrderUUID]
+	var query strings.Builder
 
-	if !ok {
-		return model.ErrOrderNotFound
-	}
+	query.WriteString("UPDATE orders SET ")
+
+	sets := make([]string, 0, 4)
+	values := make([]interface{}, 0, 4)
 
 	if params.PaymentMethod != nil {
-		order.PaymentMethod = converter.PaymentMethodToRepoModel(*params.PaymentMethod)
+		sets = append(sets, fmt.Sprintf("payment_method = $%d", len(values)+1))
+		values = append(values, *params.PaymentMethod)
 	}
 
 	if params.Status != nil {
-		order.Status = converter.StatusToRepoModel(*params.Status)
+		sets = append(sets, fmt.Sprintf("status = $%d", len(values)+1))
+		values = append(values, *params.Status)
 	}
 
 	if params.TransactionUUID != nil {
-		order.TransactionUUID = params.TransactionUUID
+		sets = append(sets, fmt.Sprintf("transaction_uuid = $%d", len(values)+1))
+		values = append(values, *params.TransactionUUID)
 	}
 
-	r.orders[params.OrderUUID] = order
+	values = append(values, params.OrderUUID)
+
+	if len(sets) == 0 {
+		return model.ErrInvalidUpdateOrderParams
+	}
+
+	query.WriteString(strings.Join(sets, ", "))
+
+	fmt.Fprintf(&query, " WHERE order_uuid = $%d", len(values))
+	res, err := r.conn.Exec(ctx, query.String(), values...)
+	if err != nil {
+		log.Printf("error updating order: %v", err)
+		return err
+	}
+
+	if res.RowsAffected() == 0 {
+		return model.ErrOrderNotFound
+	}
+
 	return nil
 }
