@@ -42,6 +42,8 @@ jobs:
       - name: 🧪 Run tests with coverage
         env:
           MODULES: ${{ inputs.modules }}
+          # Avoid Go 1.25 toolchain switch bug: "no such tool covdata"
+          GOTOOLCHAIN: local
         run: task test-coverage
 
       - name: 📊 Extract coverage percent
@@ -63,7 +65,7 @@ jobs:
           echo "GIST_ID=${{ inputs.gist-id }}" >> $GITHUB_ENV
 
       - name: 🏷️ Update Gist Badge
-        uses: schneegans/dynamic-badges-action@v1.7.0
+        uses: schneegans/dynamic-badges-action@v1.9.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: ${{ env.GIST_ID }}

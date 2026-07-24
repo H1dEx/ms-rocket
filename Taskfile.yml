@@ -297,6 +297,8 @@ tasks:
         for mod in {{.MODULES}}; do
           echo "📦 Обрабатываем модуль: $mod"
         
+          # coverpkg — все целевые пакеты; в args — только с тестами
+          # (go test -cover на пакетах без тестов на Go 1.25: "no such tool covdata")
           TARGET_PKGS=$(go list ./$mod/... \
             | grep -E '/(internal/(service|repository|api))' \
             | grep -vE '/(mocks|testdata|pkg|proto|pb|cmd)' \
@@ -307,10 +309,23 @@ tasks:
             continue
           fi
         
+          # Filter by *_test.go (avoid go list -f templates: Task interpolates braces)
+          TEST_PKGS=$(echo "$TARGET_PKGS" | tr "," "\n" | while read -r pkg; do
+            rel="${pkg#github.com/H1dEx/ms-rocket/}"
+            if ls "$rel"/*_test.go >/dev/null 2>&1; then
+              printf '%s\n' "$pkg"
+            fi
+          done | paste -sd " " -)
+        
+          if [ -z "$TEST_PKGS" ]; then
+            echo "⚠️  Нет пакетов с тестами в $mod"
+            continue
+          fi
+        
           go test -coverpkg="$TARGET_PKGS" \
             -coverprofile={{.COVERAGE_DIR}}/$mod.out \
             -covermode=atomic \
-            $(echo "$TARGET_PKGS" | tr "," " ") || ERR=1
+            $TEST_PKGS || ERR=1
         done
         
         if [ $ERR -ne 0 ]; then
