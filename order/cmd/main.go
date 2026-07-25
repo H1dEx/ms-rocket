@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -17,13 +16,13 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
-	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
 	orderApi "github.com/H1dEx/ms-rocket/order/internal/api/order/v1"
 	inventoryCli "github.com/H1dEx/ms-rocket/order/internal/client/grpc/inventory/v1"
 	paymentCli "github.com/H1dEx/ms-rocket/order/internal/client/grpc/payment/v1"
+	"github.com/H1dEx/ms-rocket/order/internal/config"
 	"github.com/H1dEx/ms-rocket/order/internal/migrator"
 	orderRepo "github.com/H1dEx/ms-rocket/order/internal/repository/order"
 	orderService "github.com/H1dEx/ms-rocket/order/internal/service/order"
@@ -33,30 +32,15 @@ import (
 )
 
 const (
-	httpPort = "8080"
-	// Таймауты для HTTP-сервера
 	readHeaderTimeout = 5 * time.Second
 	shutdownTimeout   = 10 * time.Second
-	paymentPort       = "localhost:50051"
-	inventoryPort     = "localhost:50052"
+	configPath        = "./deploy/compose/order/.env"
 )
 
 func main() {
-	envFile, err := findEnvFile()
+	err := config.Load(configPath)
 	if err != nil {
-		log.Printf("failed to find .env file: %v\n", err)
-		return
-	}
-
-	err = godotenv.Load(envFile)
-	if err != nil {
-		log.Printf("failed to load .env file: %v\n", err)
-		return
-	}
-
-	dbURI := os.Getenv("DB_URI")
-	if dbURI == "" {
-		log.Printf("DB_URI is not set")
+		log.Printf("failed to load config: %v\n", err)
 		return
 	}
 
@@ -66,15 +50,8 @@ func main() {
 		return
 	}
 
-	migrationPath := os.Getenv("MIGRATIONS_DIR")
-	if migrationPath == "" {
-		log.Printf("MIGRATIONS_DIR is not set")
-		return
-	}
-
-	migrationDir := filepath.Join(orderDir, migrationPath)
 	ctx := context.Background()
-	conn, err := pgxpool.New(ctx, dbURI)
+	conn, err := pgxpool.New(ctx, config.GetConfig().Postgres.URI())
 	if err != nil {
 		log.Printf("failed to connect to database: %v\n", err)
 		return
@@ -95,6 +72,7 @@ func main() {
 			log.Printf("failed to close database: %v", cerr)
 		}
 	}()
+	migrationDir := filepath.Join(orderDir, config.GetConfig().Postgres.MigrationDir())
 	migrator := migrator.NewMigrator(sqlDB, migrationDir)
 	err = migrator.Up()
 	if err != nil {
@@ -103,7 +81,7 @@ func main() {
 	}
 
 	paymentConn, err := grpc.NewClient(
-		paymentPort,
+		config.GetConfig().PaymentGRPC.Address(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
@@ -119,7 +97,7 @@ func main() {
 	paymentClient := paymentV1.NewPaymentServiceClient(paymentConn)
 
 	inventoryConn, err := grpc.NewClient(
-		inventoryPort,
+		config.GetConfig().InventoryGRPC.Address(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
@@ -154,7 +132,7 @@ func main() {
 	r.Mount("/", orderServer)
 
 	server := &http.Server{
-		Addr:              net.JoinHostPort("localhost", httpPort),
+		Addr:              config.GetConfig().OrderHTTP.Address(),
 		Handler:           r,
 		ReadHeaderTimeout: readHeaderTimeout, // Защита от Slowloris атак - тип DDoS-атаки, при которой
 		// атакующий умышленно медленно отправляет HTTP-заголовки, удерживая соединения открытыми и истощая
@@ -164,7 +142,7 @@ func main() {
 
 	// Запускаем сервер в отдельной горутине
 	go func() {
-		log.Printf("🚀 HTTP-сервер запущен на порту %s\n", httpPort)
+		log.Printf("🚀 HTTP-сервер запущен на адресе %s\n", config.GetConfig().OrderHTTP.Address())
 		err = server.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Printf("❌ Ошибка запуска сервера: %v\n", err)
@@ -204,23 +182,4 @@ func findOrderDir() (string, error) {
 		dir = parent
 	}
 	return dir, nil
-}
-
-func findEnvFile() (string, error) {
-	_, file, _, ok := runtime.Caller(0)
-	if !ok {
-		return "", errors.New("runtime.Caller failed")
-	}
-	dir := filepath.Dir(file)
-	for {
-		if _, err := os.Stat(filepath.Join(dir, "go.work")); err == nil {
-			break
-		}
-		parent := filepath.Dir(dir)
-		if parent == dir {
-			return "", errors.New("go.work not found")
-		}
-		dir = parent
-	}
-	return filepath.Join(dir, ".env"), nil
 }

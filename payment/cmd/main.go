@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -12,14 +11,20 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	paymentApi "github.com/H1dEx/ms-rocket/payment/internal/api/payment/v1"
+	"github.com/H1dEx/ms-rocket/payment/internal/config"
 	paymentService "github.com/H1dEx/ms-rocket/payment/internal/service/payment"
 	paymentV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/payment/v1"
 )
 
-const grpcPort = 50051
+const configPath = "./deploy/compose/payment/.env"
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
+	err := config.Load(configPath)
+	if err != nil {
+		log.Printf("failed to load config: %v\n", err)
+		return
+	}
+	lis, err := net.Listen("tcp", config.GetConfig().PaymentGRPC.Address())
 	if err != nil {
 		log.Printf("failed to listen: %v\n", err)
 		return
@@ -41,7 +46,7 @@ func main() {
 	reflection.Register(s)
 
 	go func() {
-		log.Printf("🚀 gRPC server listening on %d\n", grpcPort)
+		log.Printf("🚀 gRPC server listening on %s\n", config.GetConfig().PaymentGRPC.Address())
 		err = s.Serve(lis)
 		if err != nil {
 			log.Printf("failed to serve: %v\n", err)

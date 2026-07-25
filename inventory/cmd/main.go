@@ -2,51 +2,37 @@ package main
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"log"
 	"net"
 	"os"
 	"os/signal"
-	"path/filepath"
-	"runtime"
 	"syscall"
 
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
 	inventoryApi "github.com/H1dEx/ms-rocket/inventory/internal/api/inventory/v1"
+	"github.com/H1dEx/ms-rocket/inventory/internal/config"
 	inventoryRepo "github.com/H1dEx/ms-rocket/inventory/internal/repository/inventory"
 	inventoryService "github.com/H1dEx/ms-rocket/inventory/internal/service/inventory"
 	inventoryV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
 )
 
-const grpcPort = 50052
+const configPath = "./deploy/compose/inventory/.env"
 
 func main() {
-	envFile, err := findEnvFile()
+	err := config.Load(configPath)
 	if err != nil {
-		log.Printf("failed to find .env file: %v\n", err)
+		log.Printf("failed to load config: %v\n", err)
 		return
 	}
 
-	err = godotenv.Load(envFile)
-	if err != nil {
-		log.Printf("failed to load .env file: %v\n", err)
-		return
-	}
-
-	mongoURI := os.Getenv("INVENTORY_MONGO_URI")
-	if mongoURI == "" {
-		log.Printf("INVENTORY_MONGO_URI is not set")
-		return
-	}
+	cfg := config.GetConfig()
 
 	ctx := context.Background()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(cfg.Mongo.URI()))
 	if err != nil {
 		log.Printf("failed to connect to MongoDB: %v\n", err)
 		return
@@ -62,30 +48,9 @@ func main() {
 		log.Printf("failed to ping database: %v\n", err)
 		return
 	}
-	dbName := os.Getenv("INVENTORY_MONGO_INITDB")
-	if dbName == "" {
-		log.Printf("INVENTORY_MONGO_INITDB is not set")
-		return
-	}
-	conn := client.Database(dbName, nil)
+	conn := client.Database(cfg.Mongo.DatabaseName(), nil)
 
-	// test := m.PartMongo{
-	// 	UUID:          "123",
-	// 	Name:          "Test",
-	// 	Description:   "Test",
-	// 	Price:         100,
-	// 	StockQuantity: 100,
-	// 	Category:      "Test",
-	// 	Dimensions:    m.Dimensions{Width: 100, Height: 100},
-	// }
-
-	// _, err = db.InsertOne(ctx, test)
-	// if err != nil {
-	// 	log.Printf("failed to insert test: %v\n", err)
-	// 	return
-	// }
-
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
+	lis, err := net.Listen("tcp", cfg.InventoryGRPC.Address())
 	if err != nil {
 		log.Printf("failed to listen: %v\n", err)
 		return
@@ -107,7 +72,7 @@ func main() {
 	reflection.Register(s)
 
 	go func() {
-		log.Printf("🚀 gRPC server listening on %d\n", grpcPort)
+		log.Printf("🚀 gRPC server listening on %s\n", cfg.InventoryGRPC.Address())
 		err = s.Serve(lis)
 		if err != nil {
 			log.Printf("failed to serve: %v\n", err)
@@ -122,23 +87,4 @@ func main() {
 	log.Println("🛑 Shutting down gRPC server...")
 	s.GracefulStop()
 	log.Println("✅ Server stopped")
-}
-
-func findEnvFile() (string, error) {
-	_, file, _, ok := runtime.Caller(0)
-	if !ok {
-		return "", errors.New("runtime.Caller failed")
-	}
-	dir := filepath.Dir(file)
-	for {
-		if _, err := os.Stat(filepath.Join(dir, "go.work")); err == nil {
-			break
-		}
-		parent := filepath.Dir(dir)
-		if parent == dir {
-			return "", errors.New("go.work not found")
-		}
-		dir = parent
-	}
-	return filepath.Join(dir, ".env"), nil
 }
