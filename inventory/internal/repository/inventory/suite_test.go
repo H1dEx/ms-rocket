@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/suite"
+
+	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 )
 
 type RepositorySuite struct {
@@ -15,6 +17,7 @@ type RepositorySuite struct {
 }
 
 func (r *RepositorySuite) SetupTest() {
+	logger.SetNopLogger()
 	r.ctx = context.Background()
 	// r.repo = NewRepository()
 }

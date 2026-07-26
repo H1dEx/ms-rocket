@@ -4,8 +4,10 @@ import (
 	"context"
 
 	"github.com/samber/lo"
+	"go.uber.org/zap"
 
 	"github.com/H1dEx/ms-rocket/order/internal/model"
+	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 )
 
 func (s *service) PayOrderByID(ctx context.Context, orderUUID string, paymentMethod model.PaymentMethod) (transactionUUID string, err error) {
@@ -20,6 +22,7 @@ func (s *service) PayOrderByID(ctx context.Context, orderUUID string, paymentMet
 
 	transactionID, err := s.paymentClient.PayOrder(ctx, orderUUID, order.UserUUID, paymentMethod)
 	if err != nil {
+		logger.Error(ctx, "failed to pay order", zap.Error(err))
 		return "", err
 	}
 
@@ -27,6 +30,7 @@ func (s *service) PayOrderByID(ctx context.Context, orderUUID string, paymentMet
 
 	err = s.repo.UpdateOrder(ctx, param)
 	if err != nil {
+		logger.Error(ctx, "failed to update order", zap.Error(err))
 		return "", err
 	}
 	return transactionID, nil

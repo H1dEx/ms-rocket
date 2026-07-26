@@ -1,8 +1,9 @@
 module github.com/H1dEx/ms-rocket/order
 
-go 1.25.7
+go 1.26.4
 
 require (
+	github.com/H1dEx/ms-rocket/platform v0.0.0-00010101000000-000000000000
 	github.com/H1dEx/ms-rocket/shared v0.0.0-00010101000000-000000000000
 	github.com/brianvoe/gofakeit/v7 v7.15.0
 	github.com/caarlos0/env/v11 v11.4.1
@@ -48,7 +49,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.44.0 // indirect
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.28.0 // indirect
+	go.uber.org/zap v1.28.0
 	golang.org/x/exp v0.0.0-20260709172345-9ea1abe57597 // indirect
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
@@ -60,3 +61,5 @@ require (
 )
 
 replace github.com/H1dEx/ms-rocket/shared => ../shared
+
+replace github.com/H1dEx/ms-rocket/platform => ../platform

@@ -3,9 +3,8 @@ package main
 import (
 	"context"
 	"errors"
-	"log"
+	"fmt"
 	"net/http"
-	"os"
 	"os/signal"
 	"path/filepath"
 	"runtime"
@@ -16,6 +15,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
@@ -26,6 +26,7 @@ import (
 	"github.com/H1dEx/ms-rocket/order/internal/migrator"
 	orderRepo "github.com/H1dEx/ms-rocket/order/internal/repository/order"
 	orderService "github.com/H1dEx/ms-rocket/order/internal/service/order"
+	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
 	inventoryV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
 	paymentV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/payment/v1"
@@ -38,22 +39,30 @@ const (
 )
 
 func main() {
-	err := config.Load(configPath)
+	appCtx, appCancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer appCancel()
+
+	err := logger.Init("info", true)
 	if err != nil {
-		log.Printf("failed to load config: %v\n", err)
+		fmt.Println("failed to init logger", err)
+		return
+	}
+	err = config.Load(configPath)
+	if err != nil {
+		logger.Error(appCtx, "failed to load config", zap.Error(err))
 		return
 	}
 
 	orderDir, err := findOrderDir()
 	if err != nil {
-		log.Printf("failed to find order directory: %v\n", err)
+		logger.Error(appCtx, "failed to find order directory", zap.Error(err))
 		return
 	}
 
 	ctx := context.Background()
 	conn, err := pgxpool.New(ctx, config.GetConfig().Postgres.URI())
 	if err != nil {
-		log.Printf("failed to connect to database: %v\n", err)
+		logger.Error(appCtx, "failed to connect to database", zap.Error(err))
 		return
 	}
 	defer conn.Close()
@@ -63,20 +72,20 @@ func main() {
 
 	err = conn.Ping(ctx)
 	if err != nil {
-		log.Printf("failed to ping database: %v\n", err)
+		logger.Error(appCtx, "failed to ping database", zap.Error(err))
 		return
 	}
 	sqlDB := stdlib.OpenDB(*conn.Config().ConnConfig)
 	defer func() {
 		if cerr := sqlDB.Close(); cerr != nil {
-			log.Printf("failed to close database: %v", cerr)
+			logger.Error(appCtx, "failed to close database", zap.Error(cerr))
 		}
 	}()
 	migrationDir := filepath.Join(orderDir, config.GetConfig().Postgres.MigrationDir())
 	migrator := migrator.NewMigrator(sqlDB, migrationDir)
 	err = migrator.Up()
 	if err != nil {
-		log.Printf("failed to migrate database: %v\n", err)
+		logger.Error(appCtx, "failed to migrate database", zap.Error(err))
 		return
 	}
 
@@ -85,12 +94,12 @@ func main() {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
-		log.Printf("failed to connect: %v\n", err)
+		logger.Error(appCtx, "failed to connect", zap.Error(err))
 		return
 	}
 	defer func() {
 		if cerr := paymentConn.Close(); cerr != nil {
-			log.Printf("failed to close connect: %v", cerr)
+			logger.Error(appCtx, "failed to close connect", zap.Error(cerr))
 		}
 	}()
 
@@ -101,12 +110,12 @@ func main() {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
-		log.Printf("failed to connect: %v\n", err)
+		logger.Error(appCtx, "failed to connect", zap.Error(err))
 		return
 	}
 	defer func() {
 		if cerr := inventoryConn.Close(); cerr != nil {
-			log.Printf("failed to close connect: %v", cerr)
+			logger.Error(appCtx, "failed to close connect", zap.Error(cerr))
 		}
 	}()
 
@@ -117,7 +126,7 @@ func main() {
 
 	orderServer, err := orderV1.NewServer(api)
 	if err != nil {
-		log.Printf("ошибка создания сервера OpenAPI: %v", err)
+		logger.Error(appCtx, "failed to create server", zap.Error(err))
 		return
 	}
 	// Инициализируем роутер Chi
@@ -142,19 +151,17 @@ func main() {
 
 	// Запускаем сервер в отдельной горутине
 	go func() {
-		log.Printf("🚀 HTTP-сервер запущен на адресе %s\n", config.GetConfig().OrderHTTP.Address())
+		logger.Info(appCtx, fmt.Sprintf("🚀 HTTP-сервер запущен на адресе %s\n", config.GetConfig().OrderHTTP.Address()))
 		err = server.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Printf("❌ Ошибка запуска сервера: %v\n", err)
+			logger.Error(appCtx, "failed to start server", zap.Error(err))
 		}
 	}()
 
 	// Graceful shutdown
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
+	<-appCtx.Done()
 
-	log.Println("🛑 Завершение работы сервера...")
+	logger.Info(appCtx, "🛑 Shutting down HTTP server...")
 
 	// Создаем контекст с таймаутом для остановки сервера
 	ctx, cancel = context.WithTimeout(context.Background(), shutdownTimeout)
@@ -162,10 +169,10 @@ func main() {
 
 	err = server.Shutdown(ctx)
 	if err != nil {
-		log.Printf("❌ Ошибка при остановке сервера: %v\n", err)
+		logger.Error(appCtx, "failed to stop server", zap.Error(err))
 	}
 
-	log.Println("✅ Сервер остановлен")
+	logger.Info(appCtx, "✅ Server stopped")
 }
 
 func findOrderDir() (string, error) {

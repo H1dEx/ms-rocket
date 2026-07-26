@@ -3,11 +3,12 @@ package order
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 
 	"github.com/H1dEx/ms-rocket/order/internal/model"
+	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 )
 
 func findMissingID(parts []model.Part, ids []string) []string {
@@ -34,7 +35,6 @@ func (s *service) CreateOrder(ctx context.Context, userUUID string, partUUIDs []
 
 	parts, err := s.inventoryClient.ListParts(ctx, partUUIDs)
 	if err != nil {
-		log.Printf("error listing parts: %v", err)
 		return model.Order{}, err
 	}
 
@@ -51,10 +51,12 @@ func (s *service) CreateOrder(ctx context.Context, userUUID string, partUUIDs []
 
 	err = s.repo.CreateOrder(ctx, uuid, userUUID, partUUIDs, sum)
 	if err != nil {
+		logger.Error(ctx, "failed to create order", zap.Error(err))
 		return model.Order{}, err
 	}
 	order, err := s.repo.GetOrder(ctx, uuid)
 	if err != nil {
+		logger.Error(ctx, "failed to get order", zap.Error(err))
 		return model.Order{}, err
 	}
 	return order, nil

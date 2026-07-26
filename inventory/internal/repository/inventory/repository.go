@@ -2,15 +2,16 @@ package inventory
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/zap"
 
 	def "github.com/H1dEx/ms-rocket/inventory/internal/repository"
 	"github.com/H1dEx/ms-rocket/inventory/internal/repository/model"
+	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 )
 
 var _ def.InventoryRepository = (*repository)(nil)
@@ -42,7 +43,7 @@ func NewRepository(db *mongo.Database) def.InventoryRepository {
 
 	_, err := collection.InsertOne(context.Background(), test)
 	if err != nil {
-		log.Printf("failed to insert test: %v\n", err)
+		logger.Error(context.Background(), "failed to insert test", zap.Error(err))
 		panic(err)
 	}
 	return &repository{
