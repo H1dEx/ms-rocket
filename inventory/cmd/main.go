@@ -17,6 +17,7 @@ import (
 	"github.com/H1dEx/ms-rocket/inventory/internal/config"
 	inventoryRepo "github.com/H1dEx/ms-rocket/inventory/internal/repository/inventory"
 	inventoryService "github.com/H1dEx/ms-rocket/inventory/internal/service/inventory"
+	"github.com/H1dEx/ms-rocket/platform/pkg/grpc/health"
 	inventoryV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
 )
 
@@ -67,6 +68,8 @@ func main() {
 	api := inventoryApi.NewAPI(service)
 
 	s := grpc.NewServer()
+
+	health.RegisterServer(s)
 
 	inventoryV1.RegisterInventoryServiceServer(s, api)
 	reflection.Register(s)

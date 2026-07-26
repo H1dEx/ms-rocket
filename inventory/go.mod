@@ -1,6 +1,6 @@
 module github.com/H1dEx/ms-rocket/inventory
 
-go 1.25.0
+go 1.26.4
 
 require (
 	github.com/H1dEx/ms-rocket/shared v0.0.0-20260725113859-5e4cb1b848d1
@@ -13,6 +13,7 @@ require (
 )
 
 require (
+	github.com/H1dEx/ms-rocket/platform v0.0.0-00010101000000-000000000000 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/klauspost/compress v1.19.1 // indirect
 	github.com/montanaflynn/stats v0.12.2 // indirect
@@ -37,3 +38,5 @@ require (
 )
 
 replace github.com/H1dEx/ms-rocket/shared => ../shared
+
+replace github.com/H1dEx/ms-rocket/platform => ../platform

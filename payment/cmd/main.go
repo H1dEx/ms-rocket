@@ -13,6 +13,7 @@ import (
 	paymentApi "github.com/H1dEx/ms-rocket/payment/internal/api/payment/v1"
 	"github.com/H1dEx/ms-rocket/payment/internal/config"
 	paymentService "github.com/H1dEx/ms-rocket/payment/internal/service/payment"
+	"github.com/H1dEx/ms-rocket/platform/pkg/grpc/health"
 	paymentV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/payment/v1"
 )
 
@@ -37,6 +38,8 @@ func main() {
 	}()
 
 	s := grpc.NewServer()
+
+	health.RegisterServer(s)
 
 	service := paymentService.NewService()
 	api := paymentApi.NewAPI(service)
