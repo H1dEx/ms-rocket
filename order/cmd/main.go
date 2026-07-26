@@ -26,6 +26,7 @@ import (
 	"github.com/H1dEx/ms-rocket/order/internal/migrator"
 	orderRepo "github.com/H1dEx/ms-rocket/order/internal/repository/order"
 	orderService "github.com/H1dEx/ms-rocket/order/internal/service/order"
+	"github.com/H1dEx/ms-rocket/platform/pkg/closer"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
 	inventoryV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
@@ -47,6 +48,10 @@ func main() {
 		fmt.Println("failed to init logger", err)
 		return
 	}
+
+	closer.SetLogger(logger.Logger())
+	defer gracefulShutdown()
+
 	err = config.Load(configPath)
 	if err != nil {
 		logger.Error(appCtx, "failed to load config", zap.Error(err))
@@ -65,7 +70,10 @@ func main() {
 		logger.Error(appCtx, "failed to connect to database", zap.Error(err))
 		return
 	}
-	defer conn.Close()
+	closer.AddNamed("PostgreSQL connection", func(ctx context.Context) error {
+		conn.Close()
+		return nil
+	})
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
@@ -76,11 +84,15 @@ func main() {
 		return
 	}
 	sqlDB := stdlib.OpenDB(*conn.Config().ConnConfig)
-	defer func() {
+
+	closer.AddNamed("PostgreSQL converted connection", func(ctx context.Context) error {
 		if cerr := sqlDB.Close(); cerr != nil {
 			logger.Error(appCtx, "failed to close database", zap.Error(cerr))
+			return cerr
 		}
-	}()
+		return nil
+	})
+
 	migrationDir := filepath.Join(orderDir, config.GetConfig().Postgres.MigrationDir())
 	migrator := migrator.NewMigrator(sqlDB, migrationDir)
 	err = migrator.Up()
@@ -97,11 +109,12 @@ func main() {
 		logger.Error(appCtx, "failed to connect", zap.Error(err))
 		return
 	}
-	defer func() {
+	closer.AddNamed("Payment gRPC connection", func(ctx context.Context) error {
 		if cerr := paymentConn.Close(); cerr != nil {
 			logger.Error(appCtx, "failed to close connect", zap.Error(cerr))
 		}
-	}()
+		return nil
+	})
 
 	paymentClient := paymentV1.NewPaymentServiceClient(paymentConn)
 
@@ -113,11 +126,13 @@ func main() {
 		logger.Error(appCtx, "failed to connect", zap.Error(err))
 		return
 	}
-	defer func() {
+	closer.AddNamed("Inventory gRPC connection", func(ctx context.Context) error {
 		if cerr := inventoryConn.Close(); cerr != nil {
 			logger.Error(appCtx, "failed to close connect", zap.Error(cerr))
+			return cerr
 		}
-	}()
+		return nil
+	})
 
 	inventoryClient := inventoryV1.NewInventoryServiceClient(inventoryConn)
 	repo := orderRepo.NewOrderRepository(conn)
@@ -149,6 +164,10 @@ func main() {
 		// если клиент не успел отправить все заголовки за отведенное время.
 	}
 
+	closer.AddNamed("HTTP server", func(ctx context.Context) error {
+		return server.Shutdown(ctx)
+	})
+
 	// Запускаем сервер в отдельной горутине
 	go func() {
 		logger.Info(appCtx, fmt.Sprintf("🚀 HTTP-сервер запущен на адресе %s\n", config.GetConfig().OrderHTTP.Address()))
@@ -162,17 +181,6 @@ func main() {
 	<-appCtx.Done()
 
 	logger.Info(appCtx, "🛑 Shutting down HTTP server...")
-
-	// Создаем контекст с таймаутом для остановки сервера
-	ctx, cancel = context.WithTimeout(context.Background(), shutdownTimeout)
-	defer cancel()
-
-	err = server.Shutdown(ctx)
-	if err != nil {
-		logger.Error(appCtx, "failed to stop server", zap.Error(err))
-	}
-
-	logger.Info(appCtx, "✅ Server stopped")
 }
 
 func findOrderDir() (string, error) {
@@ -189,4 +197,13 @@ func findOrderDir() (string, error) {
 		dir = parent
 	}
 	return dir, nil
+}
+
+func gracefulShutdown() {
+	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+	defer cancel()
+
+	if err := closer.CloseAll(ctx); err != nil {
+		logger.Error(ctx, "❌ Ошибка при завершении работы", zap.Error(err))
+	}
 }

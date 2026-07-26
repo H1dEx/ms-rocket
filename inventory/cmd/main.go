@@ -6,6 +6,7 @@ import (
 	"net"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -17,6 +18,7 @@ import (
 	"github.com/H1dEx/ms-rocket/inventory/internal/config"
 	inventoryRepo "github.com/H1dEx/ms-rocket/inventory/internal/repository/inventory"
 	inventoryService "github.com/H1dEx/ms-rocket/inventory/internal/service/inventory"
+	"github.com/H1dEx/ms-rocket/platform/pkg/closer"
 	"github.com/H1dEx/ms-rocket/platform/pkg/grpc/health"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 	inventoryV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
@@ -33,6 +35,10 @@ func main() {
 		fmt.Println("failed to init logger", err)
 		return
 	}
+
+	closer.SetLogger(logger.Logger())
+	defer gracefulShutdown()
+
 	err = config.Load(configPath)
 	if err != nil {
 		logger.Error(appCtx, "failed to load config", zap.Error(err))
@@ -47,11 +53,14 @@ func main() {
 		logger.Error(appCtx, "failed to connect to MongoDB", zap.Error(err))
 		return
 	}
-	defer func() {
+
+	closer.AddNamed("MongoDB connection", func(ctx context.Context) error {
 		if cerr := client.Disconnect(ctx); cerr != nil {
 			logger.Error(appCtx, "failed to disconnect from MongoDB", zap.Error(cerr))
+			return cerr
 		}
-	}()
+		return nil
+	})
 
 	err = client.Ping(ctx, nil)
 	if err != nil {
@@ -66,12 +75,6 @@ func main() {
 		return
 	}
 
-	defer func() {
-		if cerr := lis.Close(); cerr != nil {
-			logger.Error(appCtx, "failed to close listener", zap.Error(cerr))
-		}
-	}()
-
 	repo := inventoryRepo.NewRepository(conn)
 	service := inventoryService.NewService(repo)
 	api := inventoryApi.NewAPI(service)
@@ -83,6 +86,10 @@ func main() {
 	inventoryV1.RegisterInventoryServiceServer(s, api)
 	reflection.Register(s)
 
+	closer.AddNamed("gRPC server", func(ctx context.Context) error {
+		return stopGRPCServer(ctx, s)
+	})
+
 	go func() {
 		logger.Info(appCtx, fmt.Sprintf("🚀 gRPC server listening on %s", cfg.InventoryGRPC.Address()))
 		err = s.Serve(lis)
@@ -92,9 +99,31 @@ func main() {
 		}
 	}()
 
-	// Graceful shutdown
 	<-appCtx.Done()
 	logger.Info(appCtx, "🛑 Shutting down gRPC server...")
-	s.GracefulStop()
-	logger.Info(appCtx, "✅ Server stopped")
+}
+
+func stopGRPCServer(ctx context.Context, s *grpc.Server) error {
+	done := make(chan struct{})
+	go func() {
+		s.GracefulStop()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		return nil
+	case <-ctx.Done():
+		s.Stop()
+		return ctx.Err()
+	}
+}
+
+func gracefulShutdown() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := closer.CloseAll(ctx); err != nil {
+		logger.Error(ctx, "❌ Ошибка при завершении работы", zap.Error(err))
+	}
 }
