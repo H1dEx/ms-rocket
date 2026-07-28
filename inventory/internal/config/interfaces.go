@@ -8,3 +8,8 @@ type MongoConfig interface {
 type InventoryGRPCConfig interface {
 	Address() string
 }
+
+type LoggerConfig interface {
+	Level() string
+	AsJSON() bool
+}

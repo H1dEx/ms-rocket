@@ -16,3 +16,8 @@ type InventoryGRPCConfig interface {
 type PaymentGRPCConfig interface {
 	Address() string
 }
+
+type LoggerConfig interface {
+	Level() string
+	AsJSON() bool
+}

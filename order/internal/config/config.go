@@ -13,6 +13,7 @@ type config struct {
 	OrderHTTP     OrderHTTPConfig
 	InventoryGRPC InventoryGRPCConfig
 	PaymentGRPC   PaymentGRPCConfig
+	Logger        LoggerConfig
 }
 
 func Load(path ...string) error {
@@ -37,12 +38,16 @@ func Load(path ...string) error {
 	if err != nil {
 		return err
 	}
-
+	loggerConfig, err := env.NewLoggerConfig()
+	if err != nil {
+		return err
+	}
 	appConfig = &config{
 		Postgres:      postgresConfig,
 		OrderHTTP:     orderHTTPConfig,
 		InventoryGRPC: inventoryGRPCConfig,
 		PaymentGRPC:   paymentGRPCConfig,
+		Logger:        loggerConfig,
 	}
 
 	return nil
