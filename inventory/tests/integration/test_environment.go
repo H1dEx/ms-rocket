@@ -1,3 +1,5 @@
+//go:build integration
+
 package integration
 
 import (
@@ -15,7 +17,7 @@ func (env *TestEnvironment) InsertTestPart(ctx context.Context) (string, error) 
 		"_id":         uuid,
 		"name":        gofakeit.Word(),
 		"description": gofakeit.Word(),
-		"price":       uint64(gofakeit.Number(1, 10000)),
+		"price":       uint64(gofakeit.Uint32()),
 		"quantity":    int64(gofakeit.Number(1, 1000)),
 		"category":    "ENGINE",
 		"dimensions": bson.M{

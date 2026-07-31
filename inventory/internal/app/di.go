@@ -48,6 +48,7 @@ func (c *diContainer) InventoryService(ctx context.Context) service.InventorySer
 
 func (c *diContainer) InventoryRepo(ctx context.Context) repository.InventoryRepository {
 	if c.inventoryRepo == nil {
+		//nolint:contextcheck // We no need to pass context to the repository
 		c.inventoryRepo = inventoryRepo.NewRepository(c.MongoDBHandle(ctx))
 	}
 	return c.inventoryRepo
@@ -65,7 +66,7 @@ func (c *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 	if c.mongoDBClient == nil {
 		client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.GetConfig().Mongo.URI()))
 		if err != nil {
-			panic(fmt.Errorf("failed to connect to MongoDB: %s\n", err.Error()))
+			panic(fmt.Errorf("failed to connect to MongoDB: %s", err.Error()))
 		}
 		closer.AddNamed("MongoDB connection", func(ctx context.Context) error {
 			if cerr := client.Disconnect(ctx); cerr != nil {
@@ -77,7 +78,7 @@ func (c *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 
 		err = client.Ping(ctx, nil)
 		if err != nil {
-			panic(fmt.Errorf("failed to ping database: %s\n", err.Error()))
+			panic(fmt.Errorf("failed to ping database: %s", err.Error()))
 		}
 		c.mongoDBClient = client
 	}

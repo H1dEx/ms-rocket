@@ -72,16 +72,16 @@ func (c *diContainer) PostgresConn(ctx context.Context) *pgxpool.Pool {
 	if c.postgresConn == nil {
 		conn, err := pgxpool.New(ctx, config.GetConfig().Postgres.URI())
 		if err != nil {
-			panic(fmt.Errorf("failed to connect to database: %s\n", err.Error()))
+			panic(fmt.Errorf("failed to connect to database: %s", err.Error()))
 		}
-		closer.AddNamed("PostgreSQL connection", func(ctx context.Context) error {
+		closer.AddNamed("PostgreSQL connection", func(_ context.Context) error {
 			conn.Close()
 			return nil
 		})
 
 		err = conn.Ping(ctx)
 		if err != nil {
-			panic(fmt.Errorf("failed to ping database: %s\n", err.Error()))
+			panic(fmt.Errorf("failed to ping database: %s", err.Error()))
 		}
 		sqlDB := stdlib.OpenDB(*conn.Config().ConnConfig)
 
@@ -95,14 +95,14 @@ func (c *diContainer) PostgresConn(ctx context.Context) *pgxpool.Pool {
 
 		orderDir, err := findOrderDir()
 		if err != nil {
-			panic(fmt.Errorf("failed to find order directory: %s\n", err.Error()))
+			panic(fmt.Errorf("failed to find order directory: %s", err.Error()))
 		}
 
 		migrationDir := filepath.Join(orderDir, config.GetConfig().Postgres.MigrationDir())
 		migrator := migrator.NewMigrator(sqlDB, migrationDir)
 		err = migrator.Up()
 		if err != nil {
-			panic(fmt.Errorf("failed to migrate database: %s\n", err.Error()))
+			panic(fmt.Errorf("failed to migrate database: %s", err.Error()))
 		}
 		c.postgresConn = conn
 	}
@@ -117,14 +117,14 @@ func (c *diContainer) InventoryClient(ctx context.Context) grpcClient.InventoryC
 	return c.inventoryClient
 }
 
-func (c *diContainer) InventoryConn(ctx context.Context) *grpc.ClientConn {
+func (c *diContainer) InventoryConn(_ context.Context) *grpc.ClientConn {
 	if c.inventoryConn == nil {
 		inventoryConn, err := grpc.NewClient(
 			config.GetConfig().InventoryGRPC.Address(),
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
 		)
 		if err != nil {
-			panic(fmt.Errorf("failed to connect to Inventory gRPC: %s\n", err.Error()))
+			panic(fmt.Errorf("failed to connect to Inventory gRPC: %s", err.Error()))
 		}
 		closer.AddNamed("Inventory gRPC connection", func(ctx context.Context) error {
 			if cerr := inventoryConn.Close(); cerr != nil {
@@ -146,14 +146,14 @@ func (c *diContainer) PaymentClient(ctx context.Context) grpcClient.PaymentClien
 	return c.paymentClient
 }
 
-func (c *diContainer) PaymentConn(ctx context.Context) *grpc.ClientConn {
+func (c *diContainer) PaymentConn(_ context.Context) *grpc.ClientConn {
 	if c.paymentConn == nil {
 		paymentConn, err := grpc.NewClient(
 			config.GetConfig().PaymentGRPC.Address(),
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
 		)
 		if err != nil {
-			panic(fmt.Errorf("failed to connect to Payment gRPC: %s\n", err.Error()))
+			panic(fmt.Errorf("failed to connect to Payment gRPC: %s", err.Error()))
 		}
 		closer.AddNamed("Payment gRPC connection", func(ctx context.Context) error {
 			if cerr := paymentConn.Close(); cerr != nil {

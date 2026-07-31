@@ -62,6 +62,10 @@ linters: # Список активных и отключённых линтер�
       severity: warning  # Нарушения revive будут как предупреждения, а не ошибки
       # Иначе любое явное поле в settings.revive отключает дефолтные правила revive.
       enable-default-rules: true
+      rules:
+        # DI/config намеренно возвращают неэкспортированные типы из exported-конструкторов.
+        - name: unexported-return
+          disabled: true
 
     forbidigo:
       exclude-godoc-examples: true  # Не применять запреты к Godoc-примерам
@@ -89,6 +93,11 @@ linters: # Список активных и отключённых линтер�
           - dupl         # Не проверять дублирование в тестах
           - gosec        # Не искать уязвимости в тестах
           - containedctx # ctx в testify Suite — обычный паттерн для тестов
+      # Ginkgo/Gomega DSL использует dot-import — это нормальный стиль для этих фреймворков.
+      - path: tests/integration
+        linters:
+          - revive
+        text: "dot-imports"
 
 formatters: # Форматтеры кода (проверка стиля)
   enable:

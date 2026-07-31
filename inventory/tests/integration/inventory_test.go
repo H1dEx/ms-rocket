@@ -1,3 +1,5 @@
+//go:build integration
+
 package integration
 
 import (
@@ -35,32 +37,32 @@ var _ = Describe("Inventory", func() {
 	Describe("GetPart", func() {
 		It("should return a part", func() {
 			ctx := context.Background()
-			partUuid, err := env.InsertTestPart(ctx)
+			partUUID, err := env.InsertTestPart(ctx)
 			Expect(err).ToNot(HaveOccurred(), "ожидали успешное добавление части")
-			Expect(partUuid).To(MatchRegexp(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`))
+			Expect(partUUID).To(MatchRegexp(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`))
 
-			part, err := inventoryClient.GetPart(ctx, &inventoryV1.GetPartRequest{Uuid: partUuid})
+			part, err := inventoryClient.GetPart(ctx, &inventoryV1.GetPartRequest{Uuid: partUUID})
 			Expect(err).ToNot(HaveOccurred(), "ожидали успешное получение части")
-			Expect(part.Part.Uuid).To(Equal(partUuid), "ожидали получить ту же часть, что и добавленную")
+			Expect(part.Part.Uuid).To(Equal(partUUID), "ожидали получить ту же часть, что и добавленную")
 		})
 	})
 
 	Describe("GetListParts", func() {
 		It("should return a list of parts", func() {
 			ctx := context.Background()
-			partUuidOne, err := env.InsertTestPart(ctx)
+			partUUIDOne, err := env.InsertTestPart(ctx)
 			Expect(err).ToNot(HaveOccurred(), "ожидали успешное добавление части")
-			Expect(partUuidOne).To(MatchRegexp(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`))
+			Expect(partUUIDOne).To(MatchRegexp(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`))
 
-			partUuidTwo, err := env.InsertTestPart(ctx)
+			partUUIDTwo, err := env.InsertTestPart(ctx)
 			Expect(err).ToNot(HaveOccurred(), "ожидали успешное добавление части")
-			Expect(partUuidTwo).To(MatchRegexp(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`))
+			Expect(partUUIDTwo).To(MatchRegexp(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`))
 
 			listParts, err := inventoryClient.ListParts(ctx, &inventoryV1.ListPartsRequest{})
 			Expect(err).ToNot(HaveOccurred(), "ожидали успешное получение списка частей")
 			Expect(listParts.Parts).To(HaveLen(2), "ожидали получить список из 2 частей")
-			Expect(listParts.Parts[0].Uuid).To(Equal(partUuidOne), "ожидали получить первую часть")
-			Expect(listParts.Parts[1].Uuid).To(Equal(partUuidTwo), "ожидали получить вторую часть")
+			Expect(listParts.Parts[0].Uuid).To(Equal(partUUIDOne), "ожидали получить первую часть")
+			Expect(listParts.Parts[1].Uuid).To(Equal(partUUIDTwo), "ожидали получить вторую часть")
 		})
 	})
 })

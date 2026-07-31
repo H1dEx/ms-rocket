@@ -40,7 +40,6 @@ func NewRepository(db *mongo.Database) def.InventoryRepository {
 		},
 		CreatedAt: time.Now(),
 	}
-
 	_, err := collection.InsertOne(context.Background(), test)
 	if err != nil {
 		logger.Error(context.Background(), "failed to insert test", zap.Error(err))
