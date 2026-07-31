@@ -94,7 +94,8 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 		case <-ctx.Done():
 			a.grpcServer.Stop()
 			return ctx.Err()
-	}})
+		}
+	})
 
 	reflection.Register(a.grpcServer)
 

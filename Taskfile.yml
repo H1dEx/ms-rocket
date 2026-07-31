@@ -247,7 +247,7 @@ tasks:
         for mod in {{.MODULES}}; do
           if [ -d "$mod" ]; then
             echo "🔄 Обновление зависимостей в $mod"
-            (cd "$mod" && go mod tidy -compat=1.24) || exit 1
+            (cd "$mod" && go mod tidy -compat=1.26.4) || exit 1
           fi
         done
 
