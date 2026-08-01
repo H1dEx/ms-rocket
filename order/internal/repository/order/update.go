@@ -3,7 +3,6 @@ package order
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/H1dEx/ms-rocket/order/internal/model"
@@ -43,7 +42,6 @@ func (r *rep) UpdateOrder(ctx context.Context, params model.UpdateOrderParam) er
 	fmt.Fprintf(&query, " WHERE order_uuid = $%d", len(values))
 	res, err := r.conn.Exec(ctx, query.String(), values...)
 	if err != nil {
-		log.Printf("error updating order: %v", err)
 		return err
 	}
 

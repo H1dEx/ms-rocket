@@ -2,13 +2,14 @@ package inventory
 
 import (
 	"context"
-	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.uber.org/zap"
 
 	"github.com/H1dEx/ms-rocket/inventory/internal/model"
 	"github.com/H1dEx/ms-rocket/inventory/internal/repository/converter"
 	repoModel "github.com/H1dEx/ms-rocket/inventory/internal/repository/model"
+	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 )
 
 func (r *repository) ListParts(ctx context.Context, filter *model.PartFilter) ([]model.Part, error) {
@@ -22,7 +23,7 @@ func (r *repository) ListParts(ctx context.Context, filter *model.PartFilter) ([
 
 	defer func() {
 		if err := cursor.Close(ctx); err != nil {
-			log.Printf("failed to close cursor: %v\n", err)
+			logger.Error(ctx, "failed to close cursor", zap.Error(err))
 		}
 	}()
 

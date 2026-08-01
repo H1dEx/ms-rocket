@@ -9,6 +9,7 @@ import (
 	clientMock "github.com/H1dEx/ms-rocket/order/internal/client/grpc/mocks"
 	"github.com/H1dEx/ms-rocket/order/internal/repository/mocks"
 	def "github.com/H1dEx/ms-rocket/order/internal/service"
+	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 )
 
 type ServiceSuite struct {
@@ -22,6 +23,7 @@ type ServiceSuite struct {
 }
 
 func (s *ServiceSuite) SetupTest() {
+	logger.SetNopLogger()
 	s.ctx = context.Background()
 	s.repo = mocks.NewOrderRepository(s.T())
 	s.paymentCli = clientMock.NewPaymentClient(s.T())

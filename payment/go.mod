@@ -1,11 +1,16 @@
 module github.com/H1dEx/ms-rocket/payment
 
-go 1.25.0
+go 1.26.4
 
 require (
+	github.com/H1dEx/ms-rocket/platform v0.0.0-00010101000000-000000000000
 	github.com/H1dEx/ms-rocket/shared v0.0.0-00010101000000-000000000000
+	github.com/brianvoe/gofakeit/v7 v7.15.0
+	github.com/caarlos0/env/v11 v11.4.1
 	github.com/google/uuid v1.6.0
+	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.11.1
+	go.uber.org/zap v1.28.0
 	google.golang.org/grpc v1.82.0
 )
 
@@ -13,6 +18,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.40.0 // indirect
@@ -22,3 +28,5 @@ require (
 )
 
 replace github.com/H1dEx/ms-rocket/shared => ../shared
+
+replace github.com/H1dEx/ms-rocket/platform => ../platform

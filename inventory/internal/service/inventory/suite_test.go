@@ -10,6 +10,7 @@ import (
 	"github.com/H1dEx/ms-rocket/inventory/internal/model"
 	"github.com/H1dEx/ms-rocket/inventory/internal/repository/mocks"
 	def "github.com/H1dEx/ms-rocket/inventory/internal/service"
+	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 )
 
 type ServiceSuite struct {
@@ -21,6 +22,7 @@ type ServiceSuite struct {
 }
 
 func (s *ServiceSuite) SetupTest() {
+	logger.SetNopLogger()
 	s.ctx = context.Background()
 	s.repo = mocks.NewInventoryRepository(s.T())
 	s.service = NewService(s.repo)
