@@ -10,7 +10,6 @@ import (
 	"go.uber.org/zap"
 )
 
-
 const (
 	mongoPort           = "27017"
 	mongoStartupTimeout = 1 * time.Minute
@@ -22,7 +21,7 @@ const (
 type Container struct {
 	container testcontainers.Container
 	client    *mongo.Client
-	cfg    *Config
+	cfg       *Config
 }
 
 func NewContainer(ctx context.Context, opts ...Option) (*Container, error) {
@@ -34,7 +33,7 @@ func NewContainer(ctx context.Context, opts ...Option) (*Container, error) {
 
 	success := false
 
-	defer func(){
+	defer func() {
 		if !success {
 			if err := container.Terminate(ctx); err != nil {
 				cfg.Logger.Error(ctx, "failed to stop mongo container", zap.Error(err))

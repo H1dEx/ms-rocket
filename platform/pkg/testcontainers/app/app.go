@@ -6,12 +6,13 @@ import (
 	"net"
 	"time"
 
-	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 	"github.com/docker/go-connections/nat"
 	"github.com/go-faster/errors"
 	"github.com/moby/moby/api/types/container"
 	"github.com/testcontainers/testcontainers-go"
 	"go.uber.org/zap"
+
+	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 )
 
 const (
@@ -51,7 +52,6 @@ func NewContainer(ctx context.Context, opts ...Option) (*Container, error) {
 		ContainerRequest: req,
 		Started:          true,
 	})
-
 	if err != nil {
 		return nil, errors.Errorf("failed to start app genericContainer: %v", err)
 	}

@@ -3,8 +3,9 @@ package app
 import (
 	"io"
 
-	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 	"github.com/testcontainers/testcontainers-go/wait"
+
+	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 )
 
 type Config struct {
