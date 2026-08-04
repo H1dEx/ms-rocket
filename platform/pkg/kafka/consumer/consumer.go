@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/H1dEx/ms-rocket/platform/pkg/kafka"
 	"github.com/IBM/sarama"
 	"go.uber.org/zap"
+
+	"github.com/H1dEx/ms-rocket/platform/pkg/kafka"
 )
 
 type Logger interface {
@@ -47,5 +48,4 @@ func (c *consumer) Consume(ctx context.Context, handler kafka.MessageHandler) er
 
 		c.logger.Info(ctx, "consumer group rebalanced", zap.Strings("topics", c.topics))
 	}
-
 }

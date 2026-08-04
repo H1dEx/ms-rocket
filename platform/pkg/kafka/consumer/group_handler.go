@@ -1,9 +1,10 @@
 package consumer
 
 import (
-	"github.com/H1dEx/ms-rocket/platform/pkg/kafka"
 	"github.com/IBM/sarama"
 	"go.uber.org/zap"
+
+	"github.com/H1dEx/ms-rocket/platform/pkg/kafka"
 )
 
 type Middleware func(handler kafka.MessageHandler) kafka.MessageHandler

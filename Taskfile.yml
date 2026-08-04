@@ -41,8 +41,8 @@ vars:
   COVERAGE_DIR: '{{.ROOT_DIR}}/coverage'
   COVERAGE_FILE: total.out
 
-  MODULES: inventory order payment
-  SERVICES: core,inventory,order,payment
+  MODULES: assembly inventory order payment platform
+  SERVICES: assembly,core,inventory,order,payment
 
 tasks:
   install-formatters:
