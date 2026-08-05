@@ -43,6 +43,8 @@ func StatusToModel(status string) model.OrderStatus {
 		return model.OrderStatusPaid
 	case string(model.OrderStatusCancelled):
 		return model.OrderStatusCancelled
+	case string(model.OrderStatusShipped):
+		return model.OrderStatusShipped
 	default:
 		return model.OrderStatusUnknown
 	}

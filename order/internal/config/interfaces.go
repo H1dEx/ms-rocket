@@ -1,5 +1,7 @@
 package config
 
+import "github.com/IBM/sarama"
+
 type PostgresConfig interface {
 	URI() string
 	MigrationDir() string
@@ -20,4 +22,19 @@ type PaymentGRPCConfig interface {
 type LoggerConfig interface {
 	Level() string
 	AsJSON() bool
+}
+
+type KafkaConfig interface {
+	Brokers() []string
+}
+
+type OrderPaidProducerConfig interface {
+	Topic() string
+	Config() *sarama.Config
+}
+
+type OrderAssembledConsumerConfig interface {
+	Topic() string
+	Config() *sarama.Config
+	GroupID() string
 }

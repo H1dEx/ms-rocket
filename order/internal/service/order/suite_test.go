@@ -8,6 +8,7 @@ import (
 
 	clientMock "github.com/H1dEx/ms-rocket/order/internal/client/grpc/mocks"
 	"github.com/H1dEx/ms-rocket/order/internal/repository/mocks"
+	servMock "github.com/H1dEx/ms-rocket/order/internal/service/mocks"
 	def "github.com/H1dEx/ms-rocket/order/internal/service"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 )
@@ -20,6 +21,7 @@ type ServiceSuite struct {
 	paymentCli   *clientMock.PaymentClient
 	inventoryCli *clientMock.InventoryClient
 	service      def.OrderService
+	orderProducer *servMock.ProducerService
 }
 
 func (s *ServiceSuite) SetupTest() {
@@ -28,7 +30,8 @@ func (s *ServiceSuite) SetupTest() {
 	s.repo = mocks.NewOrderRepository(s.T())
 	s.paymentCli = clientMock.NewPaymentClient(s.T())
 	s.inventoryCli = clientMock.NewInventoryClient(s.T())
-	s.service = NewOrderService(s.repo, s.inventoryCli, s.paymentCli)
+	s.orderProducer = servMock.NewProducerService(s.T())
+	s.service = NewOrderService(s.repo, s.inventoryCli, s.paymentCli, s.orderProducer)
 }
 
 func (s *ServiceSuite) TearDownTest() {}

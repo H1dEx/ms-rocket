@@ -76,6 +76,17 @@ func (c *diContainer) ProducerService() service.ProducerService {
 	return c.producerService
 }
 
+func (c *diContainer) OrderProducer() platform_kafka.Producer {
+	if c.orderProducer == nil {
+		p, err := platform_kafka_producer.NewProducer(c.SyncProducer(), config.GetConfig().OrderAssembledProducer.Topic(), logger.Logger())
+		if err != nil {
+			panic(fmt.Sprintf("failed to create order producer: %s\n", err.Error()))
+		}
+		c.orderProducer = p
+	}
+	return c.orderProducer
+}
+
 func (c *diContainer) SyncProducer() sarama.SyncProducer {
 	if c.syncProducer == nil {
 		p, err := sarama.NewSyncProducer(config.GetConfig().Kafka.Brokers(), config.GetConfig().OrderAssembledProducer.Config())
@@ -89,15 +100,4 @@ func (c *diContainer) SyncProducer() sarama.SyncProducer {
 		c.syncProducer = p
 	}
 	return c.syncProducer
-}
-
-func (c *diContainer) OrderProducer() platform_kafka.Producer {
-	if c.orderProducer == nil {
-		p, err := platform_kafka_producer.NewProducer(c.SyncProducer(), config.GetConfig().OrderAssembledProducer.Topic(), logger.Logger())
-		if err != nil {
-			panic(fmt.Sprintf("failed to create order producer: %s\n", err.Error()))
-		}
-		c.orderProducer = p
-	}
-	return c.orderProducer
 }

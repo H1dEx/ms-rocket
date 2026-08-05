@@ -304,6 +304,8 @@ func (s OrderStatus) Validate() error {
 		return nil
 	case "CANCELLED":
 		return nil
+	case "SHIPPED":
+		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
 	}

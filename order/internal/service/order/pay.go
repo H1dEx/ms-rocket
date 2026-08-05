@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/samber/lo"
 	"go.uber.org/zap"
 
@@ -33,5 +34,19 @@ func (s *service) PayOrderByID(ctx context.Context, orderUUID string, paymentMet
 		logger.Error(ctx, "failed to update order", zap.Error(err))
 		return "", err
 	}
+
+	err = s.orderProducer.ProduceOrderPaid(ctx, model.OrderPaidEvent{
+		EventUUID:       uuid.New().String(),
+		OrderUUID:       orderUUID,
+		UserUUID:        order.UserUUID,
+		PaymentMethod:   paymentMethod,
+		TransactionUUID: transactionID,
+	})
+
+	if err != nil {
+		logger.Error(ctx, "failed to produce order paid event", zap.Error(err))
+		return "", err
+	}
+
 	return transactionID, nil
 }
