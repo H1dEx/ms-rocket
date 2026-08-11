@@ -59,8 +59,8 @@ func StatusToOrder(status model.OrderStatus) orderV1.OrderStatus {
 		return orderV1.OrderStatusPAID
 	case model.OrderStatusPendingPayment:
 		return orderV1.OrderStatusPENDINGPAYMENT
-	case model.OrderStatusShipped:
-		return orderV1.OrderStatusSHIPPED
+	case model.OrderStatusAssembled:
+		return orderV1.OrderStatusASSEMBLED
 	default:
 		return orderV1.OrderStatusUNKNOWN
 	}

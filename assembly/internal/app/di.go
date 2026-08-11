@@ -4,18 +4,19 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/IBM/sarama"
+
 	"github.com/H1dEx/ms-rocket/assembly/internal/config"
+	kafka_decoder "github.com/H1dEx/ms-rocket/assembly/internal/converter/kafka"
+	"github.com/H1dEx/ms-rocket/assembly/internal/converter/kafka/decoder"
 	"github.com/H1dEx/ms-rocket/assembly/internal/service"
 	"github.com/H1dEx/ms-rocket/assembly/internal/service/consumer/order_consumer"
 	"github.com/H1dEx/ms-rocket/assembly/internal/service/producer/order_producer"
 	"github.com/H1dEx/ms-rocket/platform/pkg/closer"
-	kafka_decoder "github.com/H1dEx/ms-rocket/assembly/internal/converter/kafka"
-	"github.com/H1dEx/ms-rocket/assembly/internal/converter/kafka/decoder"
 	platform_kafka "github.com/H1dEx/ms-rocket/platform/pkg/kafka"
 	platform_kafka_consumer "github.com/H1dEx/ms-rocket/platform/pkg/kafka/consumer"
 	platform_kafka_producer "github.com/H1dEx/ms-rocket/platform/pkg/kafka/producer"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
-	"github.com/IBM/sarama"
 )
 
 type diContainer struct {

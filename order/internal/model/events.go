@@ -1,16 +1,16 @@
 package model
 
 type OrderPaidEvent struct {
-	EventUUID string 
-	OrderUUID string 
-	UserUUID string 
-	PaymentMethod PaymentMethod
+	EventUUID       string
+	OrderUUID       string
+	UserUUID        string
+	PaymentMethod   PaymentMethod
 	TransactionUUID string
 }
 
 type ShipAssembledEvent struct {
-	EventUUID string 
-	OrderUUID string
-	UserUUID  string 
+	EventUUID        string
+	OrderUUID        string
+	UserUUID         string
 	BuildTimeSeconds int64
 }

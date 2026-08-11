@@ -52,6 +52,7 @@ func (s *ServiceSuite) TestPayOrderByIdUpdateError() {
 	s.ErrorIs(err, model.ErrOrderNotFound)
 	s.Empty(response)
 }
+
 func (s *ServiceSuite) TestPayOrderByIdProduceError() {
 	var (
 		uuid          = gofakeit.UUID()

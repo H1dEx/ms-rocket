@@ -3,13 +3,14 @@ package order_producer
 import (
 	"context"
 
+	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
+
 	"github.com/H1dEx/ms-rocket/order/internal/converter"
 	"github.com/H1dEx/ms-rocket/order/internal/model"
 	def "github.com/H1dEx/ms-rocket/order/internal/service"
 	"github.com/H1dEx/ms-rocket/platform/pkg/kafka"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
-	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 var _ def.ProducerService = (*service)(nil)

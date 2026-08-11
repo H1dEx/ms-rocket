@@ -2,13 +2,13 @@ package app
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 
 	"github.com/H1dEx/ms-rocket/order/internal/config"
@@ -64,22 +64,21 @@ func (a *App) Run(ctx context.Context) error {
 		}
 	}()
 
-	go func(){
+	go func() {
 		if err := a.runConsumer(ctx); err != nil {
 			errCh <- errors.Errorf("Consumer crashed: %v", err)
 		}
 	}()
 
 	select {
-		case <-ctx.Done():
-			logger.Info(ctx, "🛑 Consumer context cancelled, shutting down")
-			return ctx.Err()
-		case err := <-errCh:
-			logger.Error(ctx, "💥 Consumer crashed", zap.Error(err))
-			cancel()
-			return err
+	case <-ctx.Done():
+		logger.Info(ctx, "🛑 Consumer context cancelled, shutting down")
+		return ctx.Err()
+	case err := <-errCh:
+		logger.Error(ctx, "💥 Consumer crashed", zap.Error(err))
+		cancel()
+		return err
 	}
-	
 }
 
 func (a *App) runConsumer(ctx context.Context) error {

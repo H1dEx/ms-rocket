@@ -19,11 +19,13 @@ import (
 	inventoryCli "github.com/H1dEx/ms-rocket/order/internal/client/grpc/inventory/v1"
 	paymentCli "github.com/H1dEx/ms-rocket/order/internal/client/grpc/payment/v1"
 	"github.com/H1dEx/ms-rocket/order/internal/config"
+	kafka_decoder "github.com/H1dEx/ms-rocket/order/internal/converter/kafka"
+	"github.com/H1dEx/ms-rocket/order/internal/converter/kafka/decoder"
 	"github.com/H1dEx/ms-rocket/order/internal/repository"
 	orderRepo "github.com/H1dEx/ms-rocket/order/internal/repository/order"
 	"github.com/H1dEx/ms-rocket/order/internal/service"
-	orderService "github.com/H1dEx/ms-rocket/order/internal/service/order"
 	consumerService "github.com/H1dEx/ms-rocket/order/internal/service/consumer/order_consumer"
+	orderService "github.com/H1dEx/ms-rocket/order/internal/service/order"
 	producerService "github.com/H1dEx/ms-rocket/order/internal/service/producer/order_producer"
 	"github.com/H1dEx/ms-rocket/platform/pkg/closer"
 	"github.com/H1dEx/ms-rocket/platform/pkg/kafka"
@@ -34,8 +36,6 @@ import (
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
 	inventoryV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
 	paymentV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/payment/v1"
-	kafka_decoder "github.com/H1dEx/ms-rocket/order/internal/converter/kafka"
-	"github.com/H1dEx/ms-rocket/order/internal/converter/kafka/decoder"
 )
 
 type diContainer struct {
@@ -54,7 +54,7 @@ type diContainer struct {
 	kafkaProducer kafka.Producer
 	kafkaConsumer kafka.Consumer
 	consumerGroup sarama.ConsumerGroup
-	orderDecoder kafka_decoder.OrderPaidDecoder
+	orderDecoder  kafka_decoder.OrderPaidDecoder
 
 	syncProducer sarama.SyncProducer
 
@@ -257,7 +257,6 @@ func (c *diContainer) KafkaConsumer(ctx context.Context) kafka.Consumer {
 func (c *diContainer) ConsumerGroup(ctx context.Context) sarama.ConsumerGroup {
 	if c.consumerGroup == nil {
 		consumerGroup, err := sarama.NewConsumerGroup(config.GetConfig().Kafka.Brokers(), config.GetConfig().OrderAssembledConsumer.GroupID(), config.GetConfig().OrderAssembledConsumer.Config())
-
 		if err != nil {
 			panic(fmt.Errorf("failed to create consumer group: %s", err.Error()))
 		}

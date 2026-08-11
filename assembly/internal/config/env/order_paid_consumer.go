@@ -6,8 +6,8 @@ import (
 )
 
 type orderPaidConsumerEnvConfig struct {
-	Topic   string `env:"ASSEMBLY_ORDER_PAID_TOPIC_NAME"`
-	GroupID string `env:"ASSEMBLY_ORDER_PAID_CONSUMER_GROUP_ID"`
+	Topic   string `env:"ORDER_PAID_TOPIC_NAME"`
+	GroupID string `env:"ORDER_PAID_CONSUMER_GROUP_ID"`
 }
 
 type orderPaidConsumerConfig struct {

@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"context"
@@ -7,11 +7,12 @@ import (
 	"syscall"
 	"time"
 
+	"go.uber.org/zap"
+
 	"github.com/H1dEx/ms-rocket/assembly/internal/app"
 	"github.com/H1dEx/ms-rocket/assembly/internal/config"
 	"github.com/H1dEx/ms-rocket/platform/pkg/closer"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
-	"go.uber.org/zap"
 )
 
 const configPath = "./deploy/compose/assembly/.env"

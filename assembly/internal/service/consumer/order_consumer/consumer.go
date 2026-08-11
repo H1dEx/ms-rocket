@@ -3,19 +3,20 @@ package order_consumer
 import (
 	"context"
 
+	"go.uber.org/zap"
+
 	converter "github.com/H1dEx/ms-rocket/assembly/internal/converter/kafka"
 	def "github.com/H1dEx/ms-rocket/assembly/internal/service"
 	"github.com/H1dEx/ms-rocket/platform/pkg/kafka"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
-	"go.uber.org/zap"
 )
 
 var _ def.ConsumerService = (*service)(nil)
 
 type service struct {
 	orderConsumer kafka.Consumer
-	decoder converter.OrderPaidDecoder
-	producer def.ProducerService
+	decoder       converter.OrderPaidDecoder
+	producer      def.ProducerService
 }
 
 func NewService(orderConsumer kafka.Consumer, conv converter.OrderPaidDecoder, producer def.ProducerService) *service {

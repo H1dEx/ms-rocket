@@ -5,10 +5,11 @@ import (
 	"math/rand"
 	"time"
 
+	"go.uber.org/zap"
+
 	"github.com/H1dEx/ms-rocket/assembly/internal/model"
 	"github.com/H1dEx/ms-rocket/platform/pkg/kafka"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
-	"go.uber.org/zap"
 )
 
 func (s *service) HandleOrderPaid(ctx context.Context, message kafka.Message) error {
@@ -19,7 +20,7 @@ func (s *service) HandleOrderPaid(ctx context.Context, message kafka.Message) er
 	}
 
 	logger.Info(ctx, "Order paid event", zap.Any("event", event))
-	buildTimeSeconds := rand.Intn(10)
+	buildTimeSeconds := rand.Intn(10) + 1
 
 	select {
 	case <-time.After(time.Duration(buildTimeSeconds) * time.Second):

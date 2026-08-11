@@ -1,11 +1,12 @@
 package decoder
 
 import (
+	"google.golang.org/protobuf/proto"
+
 	"github.com/H1dEx/ms-rocket/order/internal/converter"
 	"github.com/H1dEx/ms-rocket/order/internal/converter/kafka"
 	"github.com/H1dEx/ms-rocket/order/internal/model"
 	events_v1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/events/v1"
-	"google.golang.org/protobuf/proto"
 )
 
 var _ kafka.OrderPaidDecoder = (*decoder)(nil)

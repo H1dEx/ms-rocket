@@ -42,7 +42,6 @@ func (s *service) PayOrderByID(ctx context.Context, orderUUID string, paymentMet
 		PaymentMethod:   paymentMethod,
 		TransactionUUID: transactionID,
 	})
-
 	if err != nil {
 		logger.Error(ctx, "failed to produce order paid event", zap.Error(err))
 		return "", err

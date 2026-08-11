@@ -3,11 +3,12 @@ package order_consumer
 import (
 	"context"
 
+	"github.com/samber/lo"
+	"go.uber.org/zap"
+
 	"github.com/H1dEx/ms-rocket/order/internal/model"
 	"github.com/H1dEx/ms-rocket/platform/pkg/kafka"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
-	"github.com/samber/lo"
-	"go.uber.org/zap"
 )
 
 func (s *service) HandleOrderAssembled(ctx context.Context, message kafka.Message) error {
@@ -20,14 +21,14 @@ func (s *service) HandleOrderAssembled(ctx context.Context, message kafka.Messag
 
 	err = s.repo.UpdateOrder(ctx, model.UpdateOrderParam{
 		OrderUUID: event.OrderUUID,
-		Status:    lo.ToPtr(model.OrderStatusShipped),
+		Status:    lo.ToPtr(model.OrderStatusAssembled),
 	})
 	if err != nil {
 		logger.Error(ctx, "failed to update order", zap.Error(err))
 		return err
 	}
 
-	logger.Info(ctx, "order status updated to shipped", zap.String("order_uuid", event.OrderUUID))
+	logger.Info(ctx, "order status updated to assembled", zap.String("order_uuid", event.OrderUUID))
 
 	return nil
 }

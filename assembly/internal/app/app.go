@@ -3,11 +3,12 @@ package app
 import (
 	"context"
 
+	"github.com/go-faster/errors"
+	"go.uber.org/zap"
+
 	"github.com/H1dEx/ms-rocket/assembly/internal/config"
 	"github.com/H1dEx/ms-rocket/platform/pkg/closer"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
-	"github.com/go-faster/errors"
-	"go.uber.org/zap"
 )
 
 type App struct {
