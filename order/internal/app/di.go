@@ -219,13 +219,13 @@ func (c *diContainer) KafkaProducer(ctx context.Context) kafka.Producer {
 	return c.kafkaProducer
 }
 
-func (c *diContainer) SyncProducer(ctx context.Context) sarama.SyncProducer {
+func (c *diContainer) SyncProducer(_ context.Context) sarama.SyncProducer {
 	if c.syncProducer == nil {
 		p, err := sarama.NewSyncProducer(config.GetConfig().Kafka.Brokers(), config.GetConfig().OrderPaidProducer.Config())
 		if err != nil {
 			panic(fmt.Errorf("failed to create sync producer: %s", err.Error()))
 		}
-		closer.AddNamed("sync_producer", func(ctx context.Context) error {
+		closer.AddNamed("sync_producer", func(_ context.Context) error {
 			return p.Close()
 		})
 		c.syncProducer = p
@@ -240,7 +240,7 @@ func (c *diContainer) OrderConsumer(ctx context.Context) service.ConsumerService
 	return c.orderConsumer
 }
 
-func (c *diContainer) OrderDecoder(ctx context.Context) kafka_decoder.OrderPaidDecoder {
+func (c *diContainer) OrderDecoder(_ context.Context) kafka_decoder.OrderPaidDecoder {
 	if c.orderDecoder == nil {
 		c.orderDecoder = decoder.NewOrderPaidDecoder()
 	}
@@ -254,13 +254,13 @@ func (c *diContainer) KafkaConsumer(ctx context.Context) kafka.Consumer {
 	return c.kafkaConsumer
 }
 
-func (c *diContainer) ConsumerGroup(ctx context.Context) sarama.ConsumerGroup {
+func (c *diContainer) ConsumerGroup(_ context.Context) sarama.ConsumerGroup {
 	if c.consumerGroup == nil {
 		consumerGroup, err := sarama.NewConsumerGroup(config.GetConfig().Kafka.Brokers(), config.GetConfig().OrderAssembledConsumer.GroupID(), config.GetConfig().OrderAssembledConsumer.Config())
 		if err != nil {
 			panic(fmt.Errorf("failed to create consumer group: %s", err.Error()))
 		}
-		closer.AddNamed("consumer_group", func(ctx context.Context) error {
+		closer.AddNamed("consumer_group", func(_ context.Context) error {
 			return consumerGroup.Close()
 		})
 		c.consumerGroup = consumerGroup

@@ -70,7 +70,7 @@ func (c *diContainer) PaidConsumerGroup(_ context.Context) sarama.ConsumerGroup 
 		if err != nil {
 			panic(fmt.Errorf("failed to create paid consumer group: %s", err.Error()))
 		}
-		closer.AddNamed("paid_consumer_group", func(ctx context.Context) error {
+		closer.AddNamed("paid_consumer_group", func(_ context.Context) error {
 			return consumerGroup.Close()
 		})
 		c.paidConsumerGroup = consumerGroup
@@ -105,7 +105,7 @@ func (c *diContainer) AssembledConsumerGroup(_ context.Context) sarama.ConsumerG
 		if err != nil {
 			panic(fmt.Errorf("failed to create assembled consumer group: %s", err.Error()))
 		}
-		closer.AddNamed("assembled_consumer_group", func(ctx context.Context) error {
+		closer.AddNamed("assembled_consumer_group", func(_ context.Context) error {
 			return consumerGroup.Close()
 		})
 		c.assembledConsumerGroup = consumerGroup

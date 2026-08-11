@@ -1,3 +1,4 @@
+//nolint:dupl // consumer configs differ only by env tags
 package env
 
 import (

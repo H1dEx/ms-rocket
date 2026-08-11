@@ -24,7 +24,7 @@ func NewGroupHandler(handler kafka.MessageHandler, logger Logger, middlewares ..
 	}
 }
 
-func (h *groupHandler) Setup(session sarama.ConsumerGroupSession) error {
+func (h *groupHandler) Setup(_ sarama.ConsumerGroupSession) error {
 	return nil
 }
 

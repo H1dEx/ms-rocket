@@ -20,6 +20,7 @@ func (s *service) HandleOrderPaid(ctx context.Context, message kafka.Message) er
 	}
 
 	logger.Info(ctx, "Order paid event", zap.Any("event", event))
+	//nolint:gosec // G404: non-security delay for assembly simulation
 	buildTimeSeconds := rand.Intn(10) + 1
 
 	select {

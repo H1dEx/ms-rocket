@@ -93,7 +93,7 @@ func (a *App) initDI(_ context.Context) error {
 	return nil
 }
 
-func (a *App) InitLogger(ctx context.Context) error {
+func (a *App) InitLogger(_ context.Context) error {
 	err := logger.Init(config.GetConfig().Logger.Level(), config.GetConfig().Logger.AsJSON())
 	if err != nil {
 		return err
@@ -101,7 +101,7 @@ func (a *App) InitLogger(ctx context.Context) error {
 	return nil
 }
 
-func (a *App) initCloser(ctx context.Context) error {
+func (a *App) initCloser(_ context.Context) error {
 	closer.SetLogger(logger.Logger())
 	return nil
 }

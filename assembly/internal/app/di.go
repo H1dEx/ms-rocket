@@ -41,7 +41,7 @@ func (c *diContainer) ConsumerGroup() sarama.ConsumerGroup {
 		if err != nil {
 			panic(fmt.Sprintf("failed to create consumer group: %s\n", err.Error()))
 		}
-		closer.AddNamed("consumer_group", func(ctx context.Context) error {
+		closer.AddNamed("consumer_group", func(_ context.Context) error {
 			return consumerGroup.Close()
 		})
 		c.consumerGroup = consumerGroup
@@ -94,7 +94,7 @@ func (c *diContainer) SyncProducer() sarama.SyncProducer {
 		if err != nil {
 			panic(fmt.Sprintf("failed to create sync producer: %s\n", err.Error()))
 		}
-		closer.AddNamed("sync_producer", func(ctx context.Context) error {
+		closer.AddNamed("sync_producer", func(_ context.Context) error {
 			return p.Close()
 		})
 
