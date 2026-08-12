@@ -8,5 +8,5 @@ import (
 
 type NoopLogger struct{}
 
-func (l *NoopLogger) Info(ctx context.Context, msg string, fields ...zap.Field)  {}
-func (l *NoopLogger) Error(ctx context.Context, msg string, fields ...zap.Field) {}
+func (l *NoopLogger) Info(_ context.Context, _ string, _ ...zap.Field)  {}
+func (l *NoopLogger) Error(_ context.Context, _ string, _ ...zap.Field) {}

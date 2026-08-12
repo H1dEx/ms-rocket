@@ -2,13 +2,13 @@ package app
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 
 	"github.com/H1dEx/ms-rocket/order/internal/config"
@@ -51,7 +51,45 @@ func (a *App) initDeps(ctx context.Context) error {
 }
 
 func (a *App) Run(ctx context.Context) error {
-	return a.runHTTPServer(ctx)
+	// Канал для ошибок от компонентов
+	errCh := make(chan error, 2)
+
+	// Контекст для остановки всех горутин
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	go func() {
+		if err := a.runHTTPServer(ctx); err != nil {
+			errCh <- errors.Errorf("HTTP server crashed: %v", err)
+		}
+	}()
+
+	go func() {
+		if err := a.runConsumer(ctx); err != nil {
+			errCh <- errors.Errorf("Consumer crashed: %v", err)
+		}
+	}()
+
+	select {
+	case <-ctx.Done():
+		logger.Info(ctx, "🛑 Consumer context cancelled, shutting down")
+		return ctx.Err()
+	case err := <-errCh:
+		logger.Error(ctx, "💥 Consumer crashed", zap.Error(err))
+		cancel()
+		return err
+	}
+}
+
+func (a *App) runConsumer(ctx context.Context) error {
+	logger.Info(ctx, "Starting order consumer")
+
+	err := a.diContainer.OrderConsumer(ctx).RunConsumer(ctx)
+	if err != nil {
+		logger.Error(ctx, "failed to run consumer", zap.Error(err))
+		return err
+	}
+	return nil
 }
 
 func (a *App) initDI(_ context.Context) error {

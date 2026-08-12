@@ -1,7 +1,9 @@
 go 1.26.4
 
 use (
+	./assembly
 	./inventory
+	./notification
 	./order
 	./payment
 	./platform

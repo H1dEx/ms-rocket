@@ -3,9 +3,10 @@ package mongo
 import (
 	"context"
 
-	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 	"github.com/moby/moby/api/types/container"
 	"go.uber.org/zap"
+
+	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 )
 
 type Logger interface {

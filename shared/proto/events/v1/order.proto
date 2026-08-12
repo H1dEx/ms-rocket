@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package events.v1;
+
+import "payment/v1/payment.proto";
+
+option go_package = "github.com/H1dEx/ms-rocket/shared/pkg/proto/events/v1;events_v1";
+
+// OrderPaid событие оплаты заказа
+message OrderPaid {
+    // event_uuid Уникальный идентификатор события (для идемпотентности)
+    string event_uuid = 1;
+    // order_uuid Идентификатор оплаченного заказа
+    string order_uuid = 2;
+    // user_uuid Идентификатор пользователя, который оплатил заказ
+    string user_uuid = 3;
+    // payment_method Метод оплаты
+    payment.v1.PaymentMethod payment_method = 4;
+    // transaction_uuid Идентификатор транзакции оплаты
+    string transaction_uuid = 5;
+}
+
+// ShipAssembled событие о сборке заказа
+message ShipAssembled {
+    // event_uuid Уникальный идентификатор события (для идемпотентности)
+    string event_uuid = 1;
+    // order_uuid Идентификатор собранного заказа
+    string order_uuid = 2;
+    // user_uuid Идентификатор пользователя, который собрал заказ
+    string user_uuid = 3;
+    // build_time_seconds Время сборки заказа в секундах
+    int64 build_time_seconds = 4;
+}

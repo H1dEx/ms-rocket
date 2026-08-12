@@ -105,7 +105,6 @@ func buildProductionEncoderConfig() zapcore.EncoderConfig {
 	}
 }
 
-
 // Logger возвращает глобальный enrich-aware логгер.
 func Logger() *logger {
 	return logOrNop()
