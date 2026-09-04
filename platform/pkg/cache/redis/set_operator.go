@@ -12,6 +12,7 @@ func (c *client) SAdd(ctx context.Context, key, value string) error {
 		return err
 	})
 }
+
 func (c *client) SRem(ctx context.Context, key, value string) error {
 	return c.withConnection(ctx, func(ctx context.Context, conn redigo.Conn) error {
 		_, err := conn.Do("SREM", key, value)

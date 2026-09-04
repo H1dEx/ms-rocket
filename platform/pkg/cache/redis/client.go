@@ -8,7 +8,6 @@ import (
 	"go.uber.org/zap"
 )
 
-
 type client struct {
 	pool              *redigo.Pool
 	logger            Logger
@@ -35,7 +34,7 @@ func (c *client) withConnection(ctx context.Context, fn redisFn) error {
 	if err != nil {
 		return err
 	}
-	defer func(){
+	defer func() {
 		if err := conn.Close(); err != nil {
 			c.logger.Error(ctx, "failed to close connection", zap.Error(err))
 		}
@@ -93,7 +92,7 @@ func (c *client) HashSet(ctx context.Context, key string, values any) error {
 func (c *client) HGetAll(ctx context.Context, key string) ([]any, error) {
 	var result []any
 	err := c.withConnection(ctx, func(ctx context.Context, conn redigo.Conn) error {
-		val, err :=redigo.Values(conn.Do("HGETALL", key))
+		val, err := redigo.Values(conn.Do("HGETALL", key))
 		if err != nil {
 			return err
 		}
@@ -103,7 +102,7 @@ func (c *client) HGetAll(ctx context.Context, key string) ([]any, error) {
 	return result, err
 }
 
-func (c *client) Del (ctx context.Context, key string) error {
+func (c *client) Del(ctx context.Context, key string) error {
 	return c.withConnection(ctx, func(ctx context.Context, conn redigo.Conn) error {
 		_, err := conn.Do("DEL", key)
 		return err
@@ -112,7 +111,7 @@ func (c *client) Del (ctx context.Context, key string) error {
 
 func (c *client) Exists(ctx context.Context, key string) (bool, error) {
 	var result bool
-	err := c.withConnection(ctx, func(ctx context.Context, conn redigo.Conn)error{
+	err := c.withConnection(ctx, func(ctx context.Context, conn redigo.Conn) error {
 		val, err := redigo.Bool(conn.Do("EXISTS", key))
 		if err != nil {
 			return err
