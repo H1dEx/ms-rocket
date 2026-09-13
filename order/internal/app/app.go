@@ -14,6 +14,7 @@ import (
 	"github.com/H1dEx/ms-rocket/order/internal/config"
 	"github.com/H1dEx/ms-rocket/platform/pkg/closer"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
+	httpAuthMw "github.com/H1dEx/ms-rocket/platform/pkg/middleware/http"
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
 )
 
@@ -108,6 +109,7 @@ func (a *App) initHTTPServer(ctx context.Context) error {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(10 * time.Second))
+	r.Use(httpAuthMw.NewAuthMiddleware(a.diContainer.IamClient(ctx)).Handle)
 	r.Mount("/", orderServer)
 
 	server := &http.Server{

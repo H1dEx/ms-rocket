@@ -7,6 +7,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	inventoryApi "github.com/H1dEx/ms-rocket/inventory/internal/api/inventory/v1"
 	"github.com/H1dEx/ms-rocket/inventory/internal/config"
@@ -16,6 +18,7 @@ import (
 	inventoryService "github.com/H1dEx/ms-rocket/inventory/internal/service/inventory"
 	"github.com/H1dEx/ms-rocket/platform/pkg/closer"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
+	auth_v1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/auth/v1"
 	inventoryV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
 )
 
@@ -23,6 +26,9 @@ type diContainer struct {
 	inventoryV1API   inventoryV1.InventoryServiceServer
 	inventoryService service.InventoryService
 	inventoryRepo    repository.InventoryRepository
+
+	iamClient auth_v1.AuthServiceClient
+	iamConn   *grpc.ClientConn
 
 	mongoDBClient *mongo.Client
 	mongoDBHandle *mongo.Database
@@ -83,4 +89,32 @@ func (c *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 		c.mongoDBClient = client
 	}
 	return c.mongoDBClient
+}
+
+func (c *diContainer) IAMClient(ctx context.Context) auth_v1.AuthServiceClient {
+	if c.iamClient == nil {
+		c.iamClient = auth_v1.NewAuthServiceClient(c.IAMConn(ctx))
+	}
+	return c.iamClient
+}
+
+func (c *diContainer) IAMConn(ctx context.Context) *grpc.ClientConn {
+	if c.iamConn == nil {
+		conn, err := grpc.NewClient(config.GetConfig().IAMGRPC.Address(),
+			grpc.WithTransportCredentials(insecure.NewCredentials()),
+		)
+		if err != nil {
+			panic(fmt.Errorf("failed to connect to IAM gRPC: %s", err.Error()))
+		}
+
+		closer.AddNamed("IAM gRPC connection", func(context.Context) error {
+			if cerr := conn.Close(); cerr != nil {
+				logger.Error(ctx, "failed to close connect", zap.Error(cerr))
+				return cerr
+			}
+			return nil
+		})
+		c.iamConn = conn
+	}
+	return c.iamConn
 }

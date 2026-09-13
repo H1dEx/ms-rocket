@@ -13,3 +13,7 @@ type PaymentClient interface {
 type InventoryClient interface {
 	ListParts(ctx context.Context, uuids []string) ([]model.Part, error)
 }
+
+type IamClient interface {
+	Whoami(ctx context.Context, sessionUUID string) (model.User, model.Session, error)
+}

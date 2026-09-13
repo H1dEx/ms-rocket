@@ -8,4 +8,5 @@ var (
 	ErrPartsNotFound            = errors.New("parts not found")
 	ErrOrderNotCreated          = errors.New("order not created")
 	ErrInvalidUpdateOrderParams = errors.New("invalid update order params")
+	ErrUserNotFound             = errors.New("user not found")
 )

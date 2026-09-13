@@ -13,6 +13,7 @@ import (
 	"github.com/H1dEx/ms-rocket/platform/pkg/closer"
 	"github.com/H1dEx/ms-rocket/platform/pkg/grpc/health"
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
+	grpcAuth "github.com/H1dEx/ms-rocket/platform/pkg/middleware/grpc"
 	inventoryV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
 )
 
@@ -81,7 +82,11 @@ func (a *App) initListener(_ context.Context) error {
 
 func (a *App) initGRPCServer(ctx context.Context) error {
 	api := a.diContainer.InventoryV1API(ctx)
-	a.grpcServer = grpc.NewServer()
+
+	authInterceptor := grpcAuth.NewAuthInterceptor(a.diContainer.IAMClient(ctx))
+	a.grpcServer = grpc.NewServer(
+		grpc.UnaryInterceptor(authInterceptor.Unary()),
+	)
 	closer.AddNamed("gRPC server", func(ctx context.Context) error {
 		done := make(chan struct{})
 		go func() {
