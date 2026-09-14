@@ -34,6 +34,7 @@ import (
 	"github.com/H1dEx/ms-rocket/platform/pkg/logger"
 	"github.com/H1dEx/ms-rocket/platform/pkg/migrator"
 	orderV1 "github.com/H1dEx/ms-rocket/shared/pkg/openapi/order/v1"
+	auth_v1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/auth/v1"
 	inventoryV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
 	paymentV1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/payment/v1"
 )
@@ -47,6 +48,9 @@ type diContainer struct {
 	inventoryConn   *grpc.ClientConn
 	paymentClient   grpcClient.PaymentClient
 	paymentConn     *grpc.ClientConn
+
+	iamClient auth_v1.AuthServiceClient
+	iamConn   *grpc.ClientConn
 
 	orderProducer service.ProducerService
 	orderConsumer service.ConsumerService
@@ -183,6 +187,33 @@ func (c *diContainer) PaymentConn(_ context.Context) *grpc.ClientConn {
 		c.paymentConn = paymentConn
 	}
 	return c.paymentConn
+}
+
+func (c *diContainer) IamClient(ctx context.Context) auth_v1.AuthServiceClient {
+	if c.iamClient == nil {
+		c.iamClient = auth_v1.NewAuthServiceClient(c.IamConn(ctx))
+	}
+	return c.iamClient
+}
+
+func (c *diContainer) IamConn(ctx context.Context) *grpc.ClientConn {
+	if c.iamConn == nil {
+		conn, err := grpc.NewClient(config.GetConfig().IAMGRPC.Address(),
+			grpc.WithTransportCredentials(insecure.NewCredentials()),
+		)
+		if err != nil {
+			panic(fmt.Errorf("failed to connect to IAM gRPC: %s", err.Error()))
+		}
+		closer.AddNamed("Iam gRPC connection", func(ctx context.Context) error {
+			if cerr := conn.Close(); cerr != nil {
+				logger.Error(ctx, "failed to close iam conn", zap.Error(cerr))
+				return cerr
+			}
+			return nil
+		})
+		c.iamConn = conn
+	}
+	return c.iamConn
 }
 
 func findOrderDir() (string, error) {

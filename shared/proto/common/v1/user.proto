@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package common.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/H1dEx/ms-rocket/shared/pkg/proto/common/v1;common_v1";
+
+// Пользователь
+message User {
+    // UUID пользователя
+    string uuid = 1;
+    // Базовая информация
+    UserInfo info = 2;
+    // Дата создания
+    google.protobuf.Timestamp created_at = 3;
+    // Дата обновления
+    google.protobuf.Timestamp updated_at = 4;
+}
+
+// Базовая информация о пользователе
+message UserInfo {
+    // Логин пользователя
+    string login = 1;
+    // Email пользователя
+    string email = 2;
+    // Методы уведомлений
+    repeated NotificationMethod notification_methods = 3;
+}
+
+// Метод уведомления
+message NotificationMethod {
+    // Провайдер: telegram, email, push и т.д.
+    string provider_name = 1;
+    // Адрес/идентификатор назначения (email, чат-id)
+    string target = 2;
+}

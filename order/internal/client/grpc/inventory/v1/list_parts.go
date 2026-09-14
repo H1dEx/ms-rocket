@@ -6,10 +6,12 @@ import (
 
 	"github.com/H1dEx/ms-rocket/order/internal/client/converter"
 	"github.com/H1dEx/ms-rocket/order/internal/model"
+	authMw "github.com/H1dEx/ms-rocket/platform/pkg/middleware/grpc"
 	inventory_v1 "github.com/H1dEx/ms-rocket/shared/pkg/proto/inventory/v1"
 )
 
 func (c *client) ListParts(ctx context.Context, uuids []string) ([]model.Part, error) {
+	ctx = authMw.ForwardSessionUUIDToGRPC(ctx)
 	res, err := c.inventoryClient.ListParts(ctx, &inventory_v1.ListPartsRequest{Filter: &inventory_v1.PartsFilter{Uuids: uuids}})
 	if err != nil {
 		return nil, err

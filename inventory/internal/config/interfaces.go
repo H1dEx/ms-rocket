@@ -13,3 +13,7 @@ type LoggerConfig interface {
 	Level() string
 	AsJSON() bool
 }
+
+type IAMConfig interface {
+	Address() string
+}

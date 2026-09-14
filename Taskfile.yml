@@ -41,8 +41,8 @@ vars:
   COVERAGE_DIR: '{{.ROOT_DIR}}/coverage'
   COVERAGE_FILE: total.out
 
-  MODULES: assembly inventory order payment platform notification
-  SERVICES: assembly,core,inventory,order,payment,notification
+  MODULES: assembly inventory order payment platform notification iam
+  SERVICES: assembly,core,inventory,order,payment,notification,iam
 
 tasks:
   install-formatters:
@@ -659,12 +659,27 @@ tasks:
       - echo "[task] 📦 Останавливаем Inventory с зависимостями"
       - docker compose down --volumes
 
+  up-iam:
+    desc: Поднять IAM сервис и все его зависимости
+    dir: deploy/compose/iam
+    cmds:
+      - echo "[task] 📦 Поднимаем IAM с зависимостями"
+      - docker compose up --build --detach
+
+  down-iam:
+    desc: Остановить и удалить IAM сервис и все его зависимости
+    dir: deploy/compose/iam
+    cmds:
+      - echo "[task] 📦 Останавливаем IAM с зависимостями"
+      - docker compose down --volumes
+
   up-all:
     desc: Поднять все сервисы по очереди вместе с зависимостями
     cmds:
       - task up-core
       - task up-order
       - task up-inventory
+      - task up-iam
 
   down-all:
     desc: Остановить и удалить все сервисы по очереди вместе с зависимостями
@@ -672,6 +687,7 @@ tasks:
       - task down-core
       - task down-order
       - task down-inventory
+      - task down-iam
 
   env:install-envsubst:
     desc: "Устанавливает envsubst в bin/"

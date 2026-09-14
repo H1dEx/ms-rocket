@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package user.v1;
+
+import "common/v1/user.proto";
+option go_package = "github.com/H1dEx/ms-rocket/shared/pkg/proto/user/v1;user_v1";
+
+// Сервис пользователей
+service UserService {
+    // Регистрация пользователя
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+    // Получение информации о пользователе
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}
+
+// Информация для регистрации пользователя
+message UserRegistrationInfo {
+    // Основная информация пользователя
+    common.v1.UserInfo info = 1;
+    // Пароль пользователя
+    string password = 2;
+}
+
+// Запрос на регистрацию пользователя
+message RegisterRequest {
+    UserRegistrationInfo info = 1;
+}
+
+// Ответ на запрос на регистрацию пользователя
+message RegisterResponse {
+    // Основная информация пользователя
+    string user_uuid = 1;
+}
+
+// Запрос на получение информации о пользователе
+message GetUserRequest {
+    // UUID пользователя
+    string user_uuid = 1;
+}
+
+// Ответ на запрос на получение информации о пользователе
+message GetUserResponse {
+    // Пользователь
+    common.v1.User user = 1;
+}
